@@ -16,11 +16,7 @@ document.getElementById('mainPanel').addEventListener('click', function(e) {
 
 
 document.getElementById('rightPanel').addEventListener('click', function(e) {
-    let point = globalToRight(new Point(e.x, e.y));
-    for (let i = 0; i < rightElements.length; i++) {
-        rightElements[i].clickOccured(point);
-    }
-    e.preventDefault();
+    
 }, false);
 
 

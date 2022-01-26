@@ -31,39 +31,39 @@ bottomCtx.fillRect(0,0,window.innerWidth, FIELD_HEIGHT);
 
 let preBtn = new CanvasBtn("PRE", bottomCtx, new Point(0,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
 preBtn.clicked = loadPreScreen;
+preBtn.clickedOut = savePreScreen;
+preBtn.draw();
+
 let autoBtn = new CanvasBtn("AUTO", bottomCtx, new Point(FIELD_WIDTH/3,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
 autoBtn.clicked = loadAutoScreen;
+autoBtn.draw();
+
 let liveBtn = new CanvasBtn("LIVE", bottomCtx, new Point(2*FIELD_WIDTH/3,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
 liveBtn.clicked = loadLiveScreen;
+liveBtn.draw();
+
 let postBtn = new CanvasBtn("POST", bottomCtx, new Point(FIELD_WIDTH, 0), RIGHT_WIDTH, BOTTOM_HEIGHT);
 postBtn.clicked = loadPostScreen;
+postBtn.draw();
 
-let uppBtn = new CanvasBtn("UPPER", rightCtx, new Point(0,0), RIGHT_WIDTH, FIELD_HEIGHT*.4);
-let lowBtn = new CanvasBtn("LOW", rightCtx, new Point(0,FIELD_HEIGHT*.4), RIGHT_WIDTH, FIELD_HEIGHT*.4);
-let humBtn = new CanvasBtn("HUMAN", rightCtx, new Point(0,FIELD_HEIGHT*.8), RIGHT_WIDTH, FIELD_HEIGHT*.2);
 
-let bottomBtns = new RadioBtn("grey", "green");
+
+let bottomBtns = new RadioBtn();
 bottomBtns.btns.push (preBtn);
 bottomBtns.btns.push (autoBtn);
 bottomBtns.btns.push (liveBtn);
 bottomBtns.btns.push (postBtn);
-
-let sideBtns = new RadioBtn("grey", "green");
-sideBtns.btns.push(uppBtn);
-sideBtns.btns.push(lowBtn);
-sideBtns.btns.push(humBtn);
+bottomBtns.select(0);
 
 
 
-rightElements.push(sideBtns);
+
 bottomElements.push(bottomBtns);
 
 function globalToMain(point) {
     return point;
 }
-function globalToRight(point) {
-    return new Point(point.x-FIELD_WIDTH, point.y);
-}
+
 function globalToBottom(point) {
     return new Point(point.x, point.y-FIELD_HEIGHT);
 }

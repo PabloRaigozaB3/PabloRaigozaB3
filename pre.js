@@ -8,7 +8,7 @@ class TextInput {
         this.label.id = _labelText + "Label";
         this.label.style = "font-size: "+_fontSize+"px;";
 
-        this.input.innerText = "0";
+        this.input.value = 0;
         this.input.id = _labelText + "Input";
         this.input.style.fontSize = _fontSize+"px";
         this.input.style.width = "2em";
@@ -20,45 +20,26 @@ class TextInput {
         this.div.appendChild(this.input);
     }
 }
+let savedPreData;
+class PreData {
+    constructor(_scountInit, _teamNum, _matchNum, _roundType, _botType) {
+        this.scoutInit = _scountInit;
+        this.teamNum = _teamNum;
+        this.matchNum = _matchNum;
+        this.roundType = _roundType;
+        this.botType = _botType;
+    }
 
-function loadField() {
-    mainCanv = document.createElement('canvas');
-    document.body.appendChild(mainCanv);
-    mainCanv.id = "mainPanel";
-    mainCtx = mainCanv.getContext('2d');
-    mainCanv.style="position:absolute; left:0px; top:0px";
-    mainCanv.width = FIELD_WIDTH;
-    mainCanv.height = FIELD_HEIGHT;
-    mainCtx.fillStyle = "white";
-    mainCtx.fillRect(0,0,FIELD_WIDTH, FIELD_HEIGHT);
-    drawField(FIELD_WIDTH, FIELD_HEIGHT, mainCtx);
-    fieldIsShown = true;
-}
-
-function loadRightCanv() {
-    rightCanv = document.createElement('canvas');
-    document.body.appendChild(rightCanv);
-    rightCanv.id = "rightPanel";
-    rightCtx = rightCanv.getContext('2d');
-    rightCanv.style="position:absolute; left:"+FIELD_WIDTH+"px; top:0px";
-    rightCanv.width = RIGHT_WIDTH;
-    rightCanv.height = RIGHT_HEIGHT;
-    mainCtx.fillStyle = "white";
-    mainCtx.fillRect(0,0,RIGHT_WIDTH, RIGHT_HEIGHT);
-    fieldIsShown = true;
+    toString() {
+        return ''+this.scouterInit + this.teamNum + this.matchNum + this.roundType + this.botType;
+    }
 }
 
 function loadPreScreen(e) {
-    mainCanv.remove();
-    rightCanv.remove();
-    if(document.getElementById('prePanel') != null) {
-        document.getElementById('prePanel').remove();
-    }
-    fieldIsShown = false;
-
+    clearAllCanvas();
     let preDiv = document.createElement('div');
     document.body.appendChild(preDiv);
-    preDiv.id = "prePanel";
+    preDiv.id = "preDiv";
 
     let divStyle = "display:flex; flex-direction: row; align-items:center;justify-content:center;";
     
@@ -67,9 +48,11 @@ function loadPreScreen(e) {
     
     let teamInput = new TextInput("Team#",FIELD_HEIGHT*.06);
     teamInput.div.style = divStyle;
+    teamInput.input.style.width = "3em";
 
     let matchInput = new TextInput("Match#",FIELD_HEIGHT*.06);
     matchInput.div.style = divStyle;
+    matchInput.input.style.width = "3em";
  
     preDiv.appendChild(scouterInput.div);
     preDiv.appendChild(teamInput.div);
@@ -78,25 +61,117 @@ function loadPreScreen(e) {
     preDiv.style = "display:flex; width:"+window.innerWidth+"px; height: 5em; flex-direction:row; align-items:center; justify-content:center;";
 
     let preCanv = document.createElement('canvas');
+    preCanv.id = "prePanel";
     let preCtx = preCanv.getContext('2d');
 
     preCanv.width = window.innerWidth;
     preCanv.height = window.innerHeight - preDiv.clientHeight - BOTTOM_HEIGHT;
-    console.log(window.innerHeight - BOTTOM_HEIGHT);
     preCanv.style = "position:absolute; left: 0px; top:"+preDiv.clientHeight+"px";
     preCtx.fillStyle = 'white';
     preCtx.fillRect(0,0,preCanv.width, preCanv.height);
-    document.body.appendChild(preCanv);
+
+    createPreButtons(preCanv, preCtx);
+    preCanv.addEventListener('click', preCanvClick);
+    document.body.appendChild(preCanv, preCanv);
 }
 
-function loadAutoScreen(e) {
-    if (!fieldIsShown) { loadField(); }
+function savePreScreen(e) {
+    let scoutInit = document.getElementById('ScouterInitialsInput').value;
+    let teamNum = document.getElementById('Team#Input').value;
+    let matchNum = document.getElementById('Team#Input').value;
+    let roundType = preElements[0].getSelected().text;
+    let botType = preElements[1].getSelected().text;
+    
+    savedPreData = new PreData(scoutInit, teamNum, matchNum, roundType, botType); 
 }
+
+function createPreButtons(preCanv, preCtx) {
+    if (preElements.length == 0) {
+        let spacing = preCanv.height/21;
+
+        let qualBtn = new CanvasBtn("Quals",preCtx, new Point(preCanv.width/8, spacing),preCanv.width/4,preCanv.height/7);
+        qualBtn.draw();
+
+        let eigthBtn = new CanvasBtn("8th-Final", preCtx, new Point(preCanv.width/8,spacing+preCanv.height/7+spacing),preCanv.width/4,preCanv.height/7);
+        eigthBtn.draw();
+
+        let fourthBtn = new CanvasBtn("4th-Final", preCtx, new Point(preCanv.width/8,spacing+2*preCanv.height/7+2*spacing),preCanv.width/4,preCanv.height/7);
+        fourthBtn.draw();
+
+        let semiBtn = new CanvasBtn("2nd-Final", preCtx, new Point(preCanv.width/8,spacing+3*preCanv.height/7+3*spacing),preCanv.width/4,preCanv.height/7);
+        semiBtn.draw();
+
+        let finalBtn = new CanvasBtn("Final", preCtx, new Point(preCanv.width/8,spacing+4*preCanv.height/7+4*spacing),preCanv.width/4,preCanv.height/7);
+        finalBtn.draw();
+
+        let roundBtns = new RadioBtn();
+        roundBtns.btns.push(qualBtn);
+        roundBtns.btns.push(eigthBtn);
+        roundBtns.btns.push(fourthBtn);
+        roundBtns.btns.push(semiBtn);
+        roundBtns.btns.push(finalBtn);
+
+        let horiSpace = preCanv.width/18;
+        let vertSpace = preCanv.height/16;
+        let botBtnWidth = preCanv.width/6;
+        let botBtnHeight = preCanv.height/4;
+
+        let botBtns = new RadioBtn();
+        for (let i = 0; i < 3; i++) {
+            let redBtn = new CanvasBtn("Red "+(i+1), preCtx, new Point(preCanv.width/2+horiSpace, i*(botBtnHeight+vertSpace) + vertSpace), botBtnWidth, botBtnHeight);
+            redBtn.draw();
+            let blueBtn = new CanvasBtn("Blue "+(i+1), preCtx, new Point(preCanv.width/2+2*horiSpace+botBtnWidth, i*(botBtnHeight+vertSpace) + vertSpace), botBtnWidth, botBtnHeight);
+            blueBtn.draw();
+            
+            botBtns.btns.push(redBtn);
+            botBtns.btns.push(blueBtn);
+        }
+
+        preElements.push(roundBtns);
+        preElements.push(botBtns);
+    } else {
+        for (let i = 0; i < preElements.length; i++) {
+            preElements[i].setCtx(preCtx);
+            preElements[i].draw();
+        }
+    }
+}
+
 
 function loadLiveScreen(e) {
-    if (!fieldIsShown) { loadField(); }
 }
 
 function loadPostScreen(e) {
-    if (!fieldIsShown) { loadField(); }
+}
+
+function preCanvClick(e) {
+    let point = globalToPre(new Point(e.x, e.y));
+    for (let i = 0; i < preElements.length; i++) {
+        preElements[i].clickOccured(point);
+    }
+    e.preventDefault();
+}
+
+function globalToPre(point) {
+    return new Point(point.x, point.y-document.getElementById('preDiv').clientHeight);
+}
+
+function clearAllCanvas() {
+    clearElement('mainPanel');
+    clearElement('preDiv')
+    clearElement('prePanel');
+    clearElement('rightPanel');
+    // clearElement('bottomPanel');
+}
+
+// removes all instances of given ID
+function clearElement(elementId) {
+    let run = true;
+    while (run) {
+        if(document.getElementById(elementId) != null) {
+            document.getElementById(elementId).remove();
+        } else {
+            run = false;
+        }
+    }
 }

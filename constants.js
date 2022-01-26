@@ -7,4 +7,3 @@ const BOTTOM_HEIGHT = window.innerHeight-FIELD_HEIGHT;
 const RIGHT_WIDTH = window.innerWidth-FIELD_WIDTH;
 const RIGHT_HEIGHT = FIELD_HEIGHT;
 
-let fieldIsShown = true;
