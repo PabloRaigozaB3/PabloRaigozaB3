@@ -20,7 +20,7 @@ class TextInput {
         this.div.appendChild(this.input);
     }
 }
-let savedPreData;
+let savedPreData = null;
 class PreData {
     constructor(_scountInit, _teamNum, _matchNum, _roundType, _botType) {
         this.scoutInit = _scountInit;
@@ -31,7 +31,11 @@ class PreData {
     }
 
     toString() {
-        return ''+this.scouterInit + this.teamNum + this.matchNum + this.roundType + this.botType;
+        return ''+this.scouterInit + "," +
+                  this.teamNum + "," +
+                  this.matchNum + "," +
+                  this.roundType + "," +
+                  this.botType;
     }
 }
 
@@ -54,6 +58,12 @@ function loadPreScreen(e) {
     matchInput.div.style = divStyle;
     matchInput.input.style.width = "3em";
  
+    if (savedPreData != null) {
+        scouterInput.input.value = savedPreData.scoutInit;
+        teamInput.input.value = savedPreData.teamNum;
+        matchInput.input.value = savedPreData.matchNum;
+    }
+
     preDiv.appendChild(scouterInput.div);
     preDiv.appendChild(teamInput.div);
     preDiv.appendChild(matchInput.div);
@@ -78,7 +88,7 @@ function loadPreScreen(e) {
 function savePreScreen(e) {
     let scoutInit = document.getElementById('ScouterInitialsInput').value;
     let teamNum = document.getElementById('Team#Input').value;
-    let matchNum = document.getElementById('Team#Input').value;
+    let matchNum = document.getElementById('Match#Input').value;
     let roundType = preElements[0].getSelected().text;
     let botType = preElements[1].getSelected().text;
     
@@ -158,7 +168,7 @@ function globalToPre(point) {
 
 function clearAllCanvas() {
     clearElement('mainPanel');
-    clearElement('preDiv')
+    clearElement('preDiv');
     clearElement('prePanel');
     clearElement('rightPanel');
     // clearElement('bottomPanel');

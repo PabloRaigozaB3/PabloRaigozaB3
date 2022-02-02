@@ -9,6 +9,12 @@ class Point {
     }
 }
 
+// class Color {
+//     constructor(_r, _g, _b) {
+//         this.r = _r;
+//         this.
+//     }
+// }
 
 class CanvasBtn {
     constructor(_text, _ctx, _point, _width, _height) {
@@ -28,8 +34,11 @@ class CanvasBtn {
         this.selected = false;
         this.currentStep = 0;
         this.timer;
-        this.steps = 100;
         this.secondsLen = 3;
+        this.steps = this.secondsLen*60;
+        this.inShiftingColor = false;
+        this.transitionOver = function() {};
+        this.transColorStatus = NO_SHOT;
     }
 
     draw() {
@@ -53,24 +62,45 @@ class CanvasBtn {
         }
     }
 
-    isInside(point) {
-        if (point.x < this.point.x + this.width && point.x > this.point.x) {
-            if (point.y < this.point.y + this.height && point.y > this.point.y) {
+    isInside(ptn) {
+        if (ptn.x < this.point.x + this.width && ptn.x > this.point.x) {
+            
+
+            if (ptn.y < this.point.y + this.height && ptn.y > this.point.y) {
                 return true;
             }
         }
         return false;
     }
 
-    clickOccured(e) {
-        if (this.isInside(new Point(e.x,e.y))) {
-            this.clicked(e);
+    clickOccured(point) {
+        // console.log(point);
+        // console.log(this.point);
+        if (this.isInside(point)) {
+            this.clicked(this);
+            
             return true;
+            
         }
         return false;
     }
 
+    updateTransitionColor(STATUS) {
+        if (this.transColorStatus == MADE_SHOT)
+            this.transColorStatus = NO_SHOT;
+        else
+            this.transColorStatus++;
+
+        this.inShiftingColor = true;
+        if (this.timer != null) {
+            clearInterval(this.timer);
+            this.currentStep = 0;
+        }
+        this.timer = setInterval(this.changeColor, (this.secondsLen*1000)/this.steps, this);
+    }
+
     transitionColor() {
+        this.inShiftingColor = true;
         if (this.timer != null) {
             clearInterval(this.timer);
             this.currentStep = 0;
@@ -79,14 +109,34 @@ class CanvasBtn {
     }
 
     changeColor(btn) {
-        let r = interpolate(0, 128, btn.currentStep/btn.steps);
-        let g = interpolate(255, 128, btn.currentStep/btn.steps);
-        let b = interpolate(0, 128, btn.currentStep/btn.steps);
+        let startR = START_TRANS_R;
+        let startG = START_TRANS_G;
+        let startB = START_TRANS_B;
+        if (btn.transColorStatus == MISS_SHOT) {
+            startR = MISS_TRANS_R;
+            startG = MISS_TRANS_G;
+            startB = MISS_TRANS_B;
+
+        } else if (btn.transColorStatus == MADE_SHOT) {
+            startR = MADE_TRANS_R;
+            startG = MADE_TRANS_G;
+            startB = MADE_TRANS_B;
+        }
+
+        let r = interpolate(startR, 128, btn.currentStep/btn.steps);
+        let g = interpolate(startG, 128, btn.currentStep/btn.steps);
+        let b = interpolate(startB, 128, btn.currentStep/btn.steps);
     
         btn.backgroundColor = rgbToHex(r,g,b);
         btn.draw();
         btn.currentStep++;
-        if (btn.currentStep > btn.steps) { clearInterval(btn.timer); btn.currentStep = 0; }
+        if (btn.currentStep > btn.steps) { 
+            clearInterval(btn.timer);
+            btn.currentStep = 0;
+            btn.inShiftingColor = false;
+            btn.transitionOver();
+            btn.transColorStatus = NO_SHOT;
+        }
     }
 }
 function interpolate(startVal, endVal, t) {
@@ -121,7 +171,8 @@ class RadioBtn {
                         this.btns[this.selectedIndex].draw();  
                     }
                 }
-                this.btns[i].clicked();
+                console.log("radio");
+                this.btns[i].clicked(this.btns[i]);
                 if (display) {
                     this.btns[i].backgroundColor = this.selectColor;
                     this.btns[i].draw();
@@ -131,10 +182,10 @@ class RadioBtn {
         }
     }
 
-    mouseUpOccured(e) {
+    mouseUpOccured(start, e) {
         for(let i = 0; i < this.btns.length; i++) {
             if (this.btns[i].isInside(new Point(e.x, e.y))) {
-                this.btns[i].mouseUp(e,this.btns[i]);
+                this.btns[i].mouseUp(start, e,this.btns[i]);
             }
 
         }
@@ -169,6 +220,13 @@ class RadioBtn {
     draw() {
         for(let i = 0; i < this.btns.length; i++) {
             this.btns[i].draw();
+        }
+    }
+
+    hasTransition() {
+        for (let i = 0; i <  this.btns.length; i++) {
+            if (this.btns[i].inShiftingColor)
+                return true;
         }
     }
 }

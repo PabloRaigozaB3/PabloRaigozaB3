@@ -1,16 +1,26 @@
+function getTerminalWidth(width) {
+    let terminalWidthAct = 67.76;
+    return (terminalWidthAct * width) / 648;
+}
+
+function getTerminalHeight(height) {
+    let terminalHeightAct = 70.78;
+    return (terminalHeightAct * height) / 324;
+}
+
 function drawField(width, height, ctx) {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0,0,width, height);
     let hangarWidth = (width*127) / (2*324);
     let hangarHeight = (height*114) / (2*162);
 
-    let terminalWidthAct = 67.76;
-    let terminalHeightAct = 70.78;
+    
+    
 
-    let terminalWidth = (terminalWidthAct * width) / 648;
-    let terminalHeight = (terminalHeightAct * height) / 324;
-
+    let terminalWidth = getTerminalWidth(width);
+    let terminalHeight = getTerminalHeight(height);
     ctx.fillStyle = 'blue';
     ctx.fillRect(0,0,hangarWidth,hangarHeight);
-
 
     ctx.fillStyle = 'red';
     ctx.fillRect(width-hangarWidth,height-hangarHeight,hangarWidth,hangarHeight);
@@ -75,4 +85,11 @@ function drawCircle(point, radius, ctx) {
     ctx.moveTo(point.x, point.y);
     ctx.arc(point.x, point.y, radius, 0, 2*Math.PI);
     ctx.closePath();
+}
+
+function drawLine(point1, point2) {
+    mainCtx.beginPath();
+    mainCtx.moveTo(point1.x, point1.y);
+    mainCtx.lineTo(point2.x, point2.y);
+    mainCtx.closePath();
 }

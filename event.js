@@ -1,6 +1,6 @@
-document.body.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-});
+// document.body.addEventListener('touchstart', function(e) {
+//     e.preventDefault();
+// });
 
 document.getElementById('mainPanel').addEventListener('click', function(e) {
     let point = globalToMain(new Point(e.x, e.y));
@@ -28,7 +28,7 @@ document.getElementById('bottomPanel').addEventListener('click', function(e) {
     }
     e.preventDefault();
 }, false);
-
+// addEventListener('touch')
 let startedInRight = false;
 document.getElementById('rightPanel').addEventListener('mousedown',function(e) {
     startedInRight = true;
