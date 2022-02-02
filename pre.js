@@ -147,13 +147,6 @@ function createPreButtons(preCanv, preCtx) {
     }
 }
 
-
-function loadLiveScreen(e) {
-}
-
-function loadPostScreen(e) {
-}
-
 function preCanvClick(e) {
     let point = globalToPre(new Point(e.x, e.y));
     for (let i = 0; i < preElements.length; i++) {

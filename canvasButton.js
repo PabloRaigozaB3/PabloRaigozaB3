@@ -73,9 +73,7 @@ class CanvasBtn {
         return false;
     }
 
-    clickOccured(point) {
-        // console.log(point);
-        // console.log(this.point);
+    clickOccured(point) {        
         if (this.isInside(point)) {
             this.clicked(this);
             
@@ -171,7 +169,6 @@ class RadioBtn {
                         this.btns[this.selectedIndex].draw();  
                     }
                 }
-                console.log("radio");
                 this.btns[i].clicked(this.btns[i]);
                 if (display) {
                     this.btns[i].backgroundColor = this.selectColor;

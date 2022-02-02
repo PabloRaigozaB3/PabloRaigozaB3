@@ -36,14 +36,15 @@ preBtn.draw();
 
 let autoBtn = new CanvasBtn("AUTO", bottomCtx, new Point(FIELD_WIDTH/3,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
 autoBtn.clicked = loadAutoScreen;
+autoBtn.clickedOut = saveAutoScreen;
 autoBtn.draw();
 
 let liveBtn = new CanvasBtn("LIVE", bottomCtx, new Point(2*FIELD_WIDTH/3,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
-liveBtn.clicked = loadLiveScreen;
+// liveBtn.clicked = loadLiveScreen;
 liveBtn.draw();
 
 let postBtn = new CanvasBtn("POST", bottomCtx, new Point(FIELD_WIDTH, 0), RIGHT_WIDTH, BOTTOM_HEIGHT);
-postBtn.clicked = loadPostScreen;
+// postBtn.clicked = loadPostScreen;
 postBtn.draw();
 
 
