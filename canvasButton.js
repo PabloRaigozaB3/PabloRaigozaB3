@@ -2,6 +2,7 @@ let mainElements = [];
 let rightElements = [];
 let bottomElements = [];
 let preElements = [];
+let postElements = [];
 class Point {
     constructor(_x, _y) {
         this.x = _x;
@@ -23,7 +24,7 @@ class CanvasBtn {
         this.borderColor = "black";
         this.textColor = "black";
         this.fontSize = 30;
-        this.font = "Stencil";
+        this.font = "Arial";
         this.text = _text;
         this.width = _width;
         this.height = _height;
@@ -40,6 +41,12 @@ class CanvasBtn {
         this.transitionOver = function() {};
         this.transColorStatus = NO_SHOT;
     }
+
+    setCtx(someCtx) {
+        this.ctx = someCtx;
+    }
+
+
 
     draw() {
         this.ctx.font = this.fontSize + "px " + this.font;
@@ -62,10 +69,13 @@ class CanvasBtn {
         }
     }
 
+    clear(color) {
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(this.point.x-1, this.point.y-1, this.width+3, this.height+2);
+    }
+
     isInside(ptn) {
         if (ptn.x < this.point.x + this.width && ptn.x > this.point.x) {
-            
-
             if (ptn.y < this.point.y + this.height && ptn.y > this.point.y) {
                 return true;
             }

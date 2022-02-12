@@ -1,3 +1,4 @@
+// save the data locally
 class AutoData {
     constructor() {
         this.shots = [];
@@ -153,9 +154,11 @@ function loadAutoScreen(e) {
     loadField();
     loadRightCanv();
     createRightButtons();
+    isAuto = true;
 }
 
 function saveAutoScreen() {
+    isAuto = false;
     autoData.updateTaxi(taxiBtn.getDraggerLoc(), taxiBtn.showDragger);
 }
 
@@ -173,9 +176,16 @@ function createRightButtons() {
             lowBtn.transitionOver = lowBtnTransitionOver;
 
             let taxiBtnSelector = new CanvasBtn("TAXI", rightCtx, new Point(0,FIELD_HEIGHT*.8), RIGHT_WIDTH, FIELD_HEIGHT*.2);
-            let taxiBtnDragger = new CanvasBtn("T", document.getElementById('mainPanel').getContext('2d'), new Point(0,0), FIELD_WIDTH/20, FIELD_WIDTH/15);
-            taxiBtn = new TaxiBtn(taxiBtnSelector, taxiBtnDragger);
+            let taxiBtnDragger = new CanvasBtn("T", document.getElementById('mainPanel').getContext('2d'), new Point(0,0), FIELD_WIDTH/20, FIELD_WIDTH/15);    
+            if (taxiBtn == null) {
+                taxiBtn = new TaxiBtn(taxiBtnSelector, taxiBtnDragger);    
+            } else {
+                taxiBtn.btnDragger.ctx = document.getElementById('mainPanel').getContext('2d');
+                taxiBtn.btnSelector.ctx = rightCtx;
+            }
             taxiBtn.draw();
+            
+            
 
             let sideBtns = new RadioBtn();
             sideBtns.btns.push(uppBtn);
@@ -198,7 +208,6 @@ function createRightButtons() {
 let autoData = new AutoData();
 
 function uppBtnMouseUp(start, e, self) {
-    console.log("run")
     isShooting = true;
     self.transitionColor();
     if (inTriangle(start)) {
@@ -212,9 +221,15 @@ function uppBtnClick(self) {
     }
 }
 
+let isAuto = false;
+
 function uppBtnTransitionOver() {
     drawField(FIELD_WIDTH, FIELD_HEIGHT, document.getElementById('mainPanel').getContext('2d'));
-    autoData.addShot(currentShot);
+    if (isAuto) {
+        autoData.addShot(currentShot);
+    } else {
+        liveData.addShot(currentShot);
+    }
     currentShot = null;
     isShooting = false;
     taxiBtn.draw();
@@ -235,7 +250,11 @@ function lowBtnClick(self) {
 }
 function lowBtnTransitionOver() {
     drawField(FIELD_WIDTH, FIELD_HEIGHT, document.getElementById('mainPanel').getContext('2d'));
-    autoData.addShot(currentShot);
+    if (isAuto) {
+        autoData.addShot(currentShot);
+    } else {
+        liveData.addShot(currentShot);
+    }
     currentShot = null;
     isShooting = false;
     taxiBtn.draw();

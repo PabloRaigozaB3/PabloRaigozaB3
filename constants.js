@@ -3,10 +3,13 @@ const isTouch = (navigator.maxTouchPoints || 'ontouchstart' in document.document
 const NO_SHOT = 2999;
 const MISS_SHOT = 3000;
 const MADE_SHOT = 3001;
-const BLOCK_SHOT = 3002;
+// const BLOCK_SHOT = 3002;
 
 const FIELD_WIDTH = window.innerWidth*.85
 const FIELD_HEIGHT = FIELD_WIDTH/2;
+
+const POST_WIDTH = window.innerWidth*2/3;
+const POST_HEIGHT = FIELD_HEIGHT;
 
 const BOTTOM_WIDTH = window.innerWidth;
 const BOTTOM_HEIGHT = window.innerHeight-FIELD_HEIGHT;

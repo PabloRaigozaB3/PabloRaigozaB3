@@ -160,10 +160,13 @@ function globalToPre(point) {
 }
 
 function clearAllCanvas() {
+    rightElements = [];
     clearElement('mainPanel');
     clearElement('preDiv');
     clearElement('prePanel');
     clearElement('rightPanel');
+    clearElement('rightPanelLive');
+    clearElement('postPanel');
     // clearElement('bottomPanel');
 }
 
