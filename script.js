@@ -70,3 +70,7 @@ function globalToBottom(point) {
     return new Point(point.x, point.y-FIELD_HEIGHT);
 }
 
+window.addEventListener("scroll", (e) => {
+    e.preventDefault();
+    window.scrollTo(0, 0);
+});

@@ -21,7 +21,7 @@ class CanvasBtn {
     constructor(_text, _ctx, _point, _width, _height) {
         this.point = _point;
         this.backgroundColor = "grey";
-        this.borderColor = "black";
+        this.borderColor = "red";
         this.textColor = "black";
         this.fontSize = 30;
         this.font = "Arial";
