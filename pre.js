@@ -167,6 +167,7 @@ function clearAllCanvas() {
     clearElement('rightPanel');
     clearElement('rightPanelLive');
     clearElement('postPanel');
+    clearElement('rightSlidersDiv');
     // clearElement('bottomPanel');
 }
 

@@ -7,6 +7,7 @@ function loadPostScreen() {
 
 function createRightSliders() {
     let rightSlidersDiv = document.createElement('div');
+    rightSlidersDiv.id = "rightSlidersDiv";
     rightSlidersDiv.style.position = "absolute";
     rightSlidersDiv.style.left = POST_WIDTH+"px";
     rightSlidersDiv.style.top = 0+"px";
