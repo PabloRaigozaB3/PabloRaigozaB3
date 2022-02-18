@@ -206,16 +206,18 @@ class RadioBtn {
     }
 
     select(i) {
-        this.btns[i].clicked();
-        if (this.selectedIndex != -1) {
-            this.btns[this.selectedIndex].clickedOut();
-            this.btns[this.selectedIndex].backgroundColor = this.backgroundColor;
-            this.btns[this.selectedIndex].draw();
+        if (i != -1) {
+            this.btns[i].clicked();
+            if (this.selectedIndex != -1) {
+                this.btns[this.selectedIndex].clickedOut();
+                this.btns[this.selectedIndex].backgroundColor = this.backgroundColor;
+                this.btns[this.selectedIndex].draw();
+            }
+            this.btns[i].backgroundColor = this.selectColor;
+            
+            this.btns[i].draw();
+            this.selectedIndex = i;
         }
-        this.btns[i].backgroundColor = this.selectColor;
-        
-        this.btns[i].draw();
-        this.selectedIndex = i;
     }
 
     setCtx(ctx) {

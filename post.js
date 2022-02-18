@@ -27,7 +27,6 @@ function createRightSliders() {
     driverSlider.min = "1";
     driverSlider.min = "5";
     driverSlider.value = "4";
-    driverSlider.defaultValue = "2";
     driverSlider.step = "10";
     driverSlider.id = "driverSlider";
     
@@ -51,7 +50,8 @@ function createPostCanv() {
 
 function createPostButtons() {
     let postCtx = document.getElementById('postPanel').getContext('2d');
-    if (postElements.length == 0) {
+    // if (postElements.length == 0) {
+        
         let hangerWidth = POST_WIDTH/2;
         let hangerHeight = POST_HEIGHT*4/5;
     
@@ -60,14 +60,10 @@ function createPostButtons() {
         let xSpace = hangerWidth/(3*2);
         let ySpace = hangerHeight/(7*5);
     
-        let lwoBtn = new CanvasBtn("LOW", postCtx, new Point(xSpace, ySpace), btnWidth, btnHeight);
+        let lowBtn = new CanvasBtn("LOW", postCtx, new Point(xSpace, ySpace), btnWidth, btnHeight);
         let midBtn = new CanvasBtn("MID", postCtx, new Point(xSpace, btnHeight+ySpace*2), btnWidth, btnHeight);
         let highBtn = new CanvasBtn("HIGH", postCtx, new Point(xSpace, 2*btnHeight+ySpace*3), btnWidth, btnHeight);
         let travBtn = new CanvasBtn("TRAV", postCtx, new Point(xSpace, 3*btnHeight+ySpace*4), btnWidth, btnHeight);
-        lwoBtn.draw();
-        midBtn.draw();
-        highBtn.draw();
-        travBtn.draw();
     
         let succWidth = hangerWidth*4/5;
         let succHeight = (POST_HEIGHT-hangerHeight)*7/8;
@@ -76,14 +72,30 @@ function createPostButtons() {
     
         let succBtn = new CanvasBtn("SUCCESSFUL?", postCtx, new Point(succXSpace, hangerHeight), succWidth, succHeight);
         succBtn.clicked = succBtnClicked;
-        succBtn.draw();
     
         let hangerRadio = new RadioBtn();
-        hangerRadio.btns.push(lwoBtn);
+
+        if (postElements.length != 0) {
+            lowBtn.selected = postElements[0].btns[0].selected;
+            midBtn.selected = postElements[0].btns[1].selected;
+            highBtn.selected = postElements[0].btns[2].selected;
+            travBtn.selected = postElements[0].btns[3].selected;
+
+            if (postElements[1].selected)
+                succBtn.clicked(succBtn);
+            
+        }
+        succBtn.draw();
+        hangerRadio.btns.push(lowBtn);
         hangerRadio.btns.push(midBtn);
         hangerRadio.btns.push(highBtn);
         hangerRadio.btns.push(travBtn);
  
+        if (postElements.length != 0) {
+            hangerRadio.select(postElements[0].selectedIndex);
+        }
+        hangerRadio.draw();
+
         let tippedWidth = hangerWidth*3/(4*2);
         let tippedHeight = hangerHeight*.375*.75;
         
@@ -92,32 +104,52 @@ function createPostButtons() {
         tippedBtn.draw();
         let gotUpBtn = new CanvasBtn("GOT UP", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2,POST_HEIGHT*.1875-tippedHeight/2), tippedWidth, tippedHeight);
         gotUpBtn.clickOccured = gotUpBtnClickOccured;
-        gotUpBtn.clicked = gotUpBtnClicked;
+        gotUpBtn.clicked = v;
 
         let groundBtn = new CanvasBtn("GROUND", postCtx, new Point(tippedBtn.point.x, POST_HEIGHT*.5625-tippedHeight/2), tippedWidth, tippedHeight);
+        groundBtn.clicked = v;
         groundBtn.draw();
         let termBtn = new CanvasBtn("TERMINAL", postCtx, new Point(gotUpBtn.point.x, groundBtn.point.y), tippedWidth, tippedHeight);
+        termBtn.clicked = v;
         termBtn.draw();
-        let pickUpRadio = new RadioBtn();
-        pickUpRadio.btns.push(groundBtn);
-        pickUpRadio.btns.push(termBtn);
+        
         let dieBtn = new CanvasBtn("DIE", postCtx, new Point(POST_WIDTH*.75-hangerWidth*.375, POST_HEIGHT*.875-tippedHeight/2), hangerWidth*.75, hangerHeight*.2)
-        dieBtn.clicked = dieBtnClicked;
+        dieBtn.clicked = v;
         dieBtn.draw();
+
+        if (postElements.length != 0) {
+            if (postElements[3].selected)
+                gotUpBtn.clicked(gotUpBtn);
+            if (postElements[2].selected) {
+                tippedBtn.clicked(tippedBtn);
+                gotUpBtn.draw();
+            }
+            if (postElements[4].selected)
+                groundBtn.clicked(groundBtn);
+            if (postElements[5].selected)
+                termBtn.clicked(termBtn);
+            if (postElements[6].selected)
+                dieBtn.clicked(dieBtn);
+        }
+
+        postElements = [];
         postElements.push(hangerRadio);
         postElements.push(succBtn);
         postElements.push(tippedBtn);
         postElements.push(gotUpBtn);
 
-        postElements.push(pickUpRadio);
+        postElements.push(groundBtn);
+        postElements.push(termBtn);
         postElements.push(dieBtn);
-    } else {
-        for (let i = 0; i < postElements.length; i++) {
-            postElements[i].setCtx(postCtx);
-            postElements[i].draw();
-        }
 
-    }
+        
+    // } else {
+    //     for (let i = 0; i < postElements.length; i++) {
+    //         postElements[i].setCtx(postCtx);
+    //         postElements[i].draw();
+    //     }
+
+    // }
     
 }
 
@@ -150,7 +182,7 @@ function gotUpBtnClickOccured(point) {
     }
 }
 
-function gotUpBtnClicked(self) {
+function v(self) {
     if (self.selected) {
         self.backgroundColor = 'grey';
     } else {

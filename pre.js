@@ -80,9 +80,10 @@ function loadPreScreen(e) {
     preCtx.fillStyle = 'white';
     preCtx.fillRect(0,0,preCanv.width, preCanv.height);
 
-    createPreButtons(preCanv, preCtx);
+    
     preCanv.addEventListener('click', preCanvClick);
-    document.body.appendChild(preCanv, preCanv);
+    document.body.appendChild(preCanv);
+    createPreButtons();
 }
 
 function savePreScreen(e) {
@@ -95,8 +96,10 @@ function savePreScreen(e) {
     savedPreData = new PreData(scoutInit, teamNum, matchNum, roundType, botType); 
 }
 
-function createPreButtons(preCanv, preCtx) {
-    if (preElements.length == 0) {
+function createPreButtons() {
+    // if (preElements.length == 0) {
+        let preCanv = document.getElementById('prePanel');
+        let preCtx = preCanv.getContext('2d');
         let spacing = preCanv.height/21;
 
         let qualBtn = new CanvasBtn("Quals",preCtx, new Point(preCanv.width/8, spacing),preCanv.width/4,preCanv.height/7);
@@ -137,14 +140,27 @@ function createPreButtons(preCanv, preCtx) {
             botBtns.btns.push(blueBtn);
         }
 
+        let resetBtnWidth = preCanv.width/16;
+        // let resetBtn = new CanvasBtn("REFRESH", preCtx, new Point(0, 0), 100, 100);
+        let resetBtn = new CanvasBtn("↻", preCtx, new Point(0, 0), resetBtnWidth, resetBtnWidth);
+        resetBtn.clicked = resestBtnClicked;
+        resetBtn.draw();
+
+        preElements = [];
         preElements.push(roundBtns);
         preElements.push(botBtns);
-    } else {
-        for (let i = 0; i < preElements.length; i++) {
-            preElements[i].setCtx(preCtx);
-            preElements[i].draw();
-        }
-    }
+        preElements.push(resetBtn);
+    // } else {
+    //     for (let i = 0; i < preElements.length; i++) {
+    //         preElements[i].setCtx(preCtx);
+    //         preElements[i].draw();
+    //     }
+    // }
+}
+
+function resestBtnClicked(self) {
+    repopulateConts();
+    loadBottomCanv();
 }
 
 function preCanvClick(e) {

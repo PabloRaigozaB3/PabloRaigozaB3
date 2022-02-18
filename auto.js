@@ -163,9 +163,9 @@ function saveAutoScreen() {
 }
 
 function createRightButtons() {
-    if (document.getElementById('rightPanel') != null) {
+    //if (document.getElementById('rightPanel') != null) {
         let rightCtx = document.getElementById('rightPanel').getContext('2d');
-        if (rightElements.length == 0) {
+        // if (rightElements.length == 0) {
             let uppBtn = new CanvasBtn("UPPER", rightCtx, new Point(0,0), RIGHT_WIDTH, FIELD_HEIGHT*.4);
             uppBtn.mouseUp = uppBtnMouseUp;
             uppBtn.clicked = uppBtnClick;
@@ -182,6 +182,9 @@ function createRightButtons() {
             } else {
                 taxiBtn.btnDragger.ctx = document.getElementById('mainPanel').getContext('2d');
                 taxiBtn.btnSelector.ctx = rightCtx;
+                taxiBtn.btnSelector.point = new Point(0, FIELD_HEIGHT*.8);
+                taxiBtn.btnSelector.width = RIGHT_WIDTH;
+                taxiBtn.btnSelector.height = FIELD_HEIGHT*.2;
             }
             taxiBtn.draw();
             
@@ -192,16 +195,16 @@ function createRightButtons() {
             sideBtns.btns.push(lowBtn);
             sideBtns.draw();
             rightElements.push(sideBtns);
-        } else {
-            for (let i = 0; i < rightElements.length; i++) {
-                rightElements[i].setCtx(rightCtx);
-                rightElements[i].draw();
-            }
-            taxiBtn.btnSelector.ctx = rightCtx;
-            taxiBtn.btnDragger.ctx = document.getElementById('mainPanel').getContext('2d');
-            taxiBtn.draw();
-        }
-    }
+    //     } else {
+    //         for (let i = 0; i < rightElements.length; i++) {
+    //             rightElements[i].setCtx(rightCtx);
+    //             rightElements[i].draw();
+    //         }
+    //         taxiBtn.btnSelector.ctx = rightCtx;
+    //         taxiBtn.btnDragger.ctx = document.getElementById('mainPanel').getContext('2d');
+    //         taxiBtn.draw();
+    //     }
+    // }
     
 }
 

@@ -5,17 +5,17 @@ const MISS_SHOT = 3000;
 const MADE_SHOT = 3001;
 // const BLOCK_SHOT = 3002;
 
-const FIELD_WIDTH = window.innerWidth*.85
-const FIELD_HEIGHT = FIELD_WIDTH/2;
+let FIELD_WIDTH = window.innerWidth*.85
+let FIELD_HEIGHT = FIELD_WIDTH/2;
 
-const POST_WIDTH = window.innerWidth*2/3;
-const POST_HEIGHT = FIELD_HEIGHT;
+let POST_WIDTH = window.innerWidth*2/3;
+let POST_HEIGHT = FIELD_HEIGHT;
 
-const BOTTOM_WIDTH = window.innerWidth;
-const BOTTOM_HEIGHT = window.innerHeight-FIELD_HEIGHT;
+let BOTTOM_WIDTH = window.innerWidth;
+let BOTTOM_HEIGHT = window.innerHeight-FIELD_HEIGHT;
 
-const RIGHT_WIDTH = window.innerWidth-FIELD_WIDTH;
-const RIGHT_HEIGHT = FIELD_HEIGHT;
+let RIGHT_WIDTH = window.innerWidth-FIELD_WIDTH;
+let RIGHT_HEIGHT = FIELD_HEIGHT;
 
 const START_TRANS_R = 78;
 const START_TRANS_G = 78;
@@ -28,3 +28,17 @@ const MISS_TRANS_B = 0;
 const MADE_TRANS_R = 0;
 const MADE_TRANS_G = 255;
 const MADE_TRANS_B = 0;
+
+function repopulateConts() {
+    FIELD_WIDTH = window.innerWidth*.85
+    FIELD_HEIGHT = FIELD_WIDTH/2;
+
+    POST_WIDTH = window.innerWidth*2/3;
+    POST_HEIGHT = FIELD_HEIGHT;
+
+    BOTTOM_WIDTH = window.innerWidth;
+    BOTTOM_HEIGHT = window.innerHeight-FIELD_HEIGHT;
+
+    RIGHT_WIDTH = window.innerWidth-FIELD_WIDTH;
+    RIGHT_HEIGHT = FIELD_HEIGHT;
+}

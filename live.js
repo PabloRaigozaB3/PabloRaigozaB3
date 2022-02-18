@@ -14,9 +14,9 @@ class LiveData {
 let liveData = new LiveData();
 
 function createRightButtonsLive() {
-    if (document.getElementById('rightPanelLive') != null) {
+    // if (document.getElementById('rightPanelLive') != null) {
         let rightCtx = document.getElementById('rightPanelLive').getContext('2d');
-        if (rightElements.length == 0) {
+        // if (rightElements.length == 0) {
             let uppBtn = new CanvasBtn("UPPER", rightCtx, new Point(0,0), RIGHT_WIDTH, FIELD_HEIGHT*.5);
             uppBtn.mouseUp = uppBtnMouseUp;
             uppBtn.clicked = uppBtnClick;
@@ -31,16 +31,14 @@ function createRightButtonsLive() {
             sideBtns.btns.push(lowBtn);
             sideBtns.draw();
             rightElements.push(sideBtns);
-        } else {
-            for (let i = 0; i < rightElements.length; i++) {
-                rightElements[i].setCtx(rightCtx);
-                rightElements[i].draw();
-            }
-            taxiBtn.btnSelector.ctx = rightCtx;
-            taxiBtn.btnDragger.ctx = document.getElementById('mainPanel').getContext('2d');
-            taxiBtn.draw();
-        }
-    }
+        // } else {
+        //     for (let i = 0; i < rightElements.length; i++) {
+        //         rightElements[i].setCtx(rightCtx);
+        //         rightElements[i].draw();
+        //     }
+
+        // }
+    // }
     
 }
 
