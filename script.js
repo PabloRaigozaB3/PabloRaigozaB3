@@ -31,6 +31,7 @@ function createBottomBtns() {
 
     let postBtn = new CanvasBtn("POST", bottomCtx, new Point(FIELD_WIDTH, 0), RIGHT_WIDTH, BOTTOM_HEIGHT);
     postBtn.clicked = loadPostScreen;
+    postBtn.clickedOut = unLoadPostScreen;
     postBtn.draw();
 
 
@@ -50,10 +51,53 @@ function createBottomBtns() {
 function bottomCanvClicked(e) {
     let point = globalToBottom(new Point(e.x, e.y));
 
+    let postBtn = bottomElements[0].btns[3];
+    if (postBtn.selected &&postBtn.isInside(point)) {
+        // side of QR code is the length of smallest side (width or height)
+        // generate in middle of screen
+        let side = window.innerHeight;
+        if (window.innerHeight > window.innerWidth) {
+            side = window.innerWidth;
+        }
+        let stringify = "HELLA";
+        let qrDiv = document.createElement('div');
+        qrDiv.id = "qrDiv";
+        qrDiv.style = "display:flex; flex-direction: column; align-items:center;justify-content:left;";
+        qrDiv.style.position = "absolute";
+        // qrDiv.style.width = side+"px";
+        // qrDiv.style.height = side+"px";
+        // qrDiv.style.left  = (window.innerWidth-side)/2+"px";
+        // qrDiv.style.top = (window.innerHeight-side)/2+"px";
+
+        qrDiv.style.width = window.innerWidth+'px';
+        qrDiv.style.height = window.innerHeight+'px';
+        qrDiv.style.left  = "0px";
+        qrDiv.style.top = "0px";
+
+        qrDiv.style.background = "white"
+        qrDiv.addEventListener('click', qrDivClick);
+        let theQRDiv = document.createElement('div');
+        theQRDiv.id = 'theQRDiv';
+        qrDiv.appendChild(theQRDiv);
+        document.body.appendChild(qrDiv);
+
+
+        let qr = new QRCode(theQRDiv);
+        qr.makeCode(stringify);
+        theQRDiv.style.position = "absolute";
+        let theSide = theQRDiv.offsetWidth;
+        theQRDiv.style.left  = (window.innerWidth-theSide)/2+"px";
+        theQRDiv.style.top = (window.innerHeight-theSide)/2+"px";
+        // qr.makeCode(stringify);
+    }
     for (let i = 0; i < bottomElements.length; i++) {
         bottomElements[i].clickOccured(point);
     }
     e.preventDefault();
+}
+
+function qrDivClick(e) {
+    document.getElementById('qrDiv').remove();
 }
 
 loadBottomCanv();

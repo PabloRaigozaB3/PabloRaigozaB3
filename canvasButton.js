@@ -171,15 +171,16 @@ class RadioBtn {
     clickOccured(e, display = true) {
         for(let i = 0; i < this.btns.length; i++) {
             if (this.btns[i].isInside(new Point(e.x, e.y)) && this.selectedIndex != i) {
-                
                 if (this.selectedIndex != -1) {
                     this.btns[this.selectedIndex].clickedOut();
                     if (display) {
-                        this.btns[this.selectedIndex].backgroundColor = this.backgroundColor;
+                        this.btns[this.selectedIndex].backgroundColor = this.backgroundColor; // redraw old btn
                         this.btns[this.selectedIndex].draw();  
                     }
+                    this.btns[this.selectedIndex].selected = false;
                 }
                 this.btns[i].clicked(this.btns[i]);
+                this.btns[i].selected = true;
                 if (display) {
                     this.btns[i].backgroundColor = this.selectColor;
                     this.btns[i].draw();
@@ -203,6 +204,13 @@ class RadioBtn {
             return "";
         else
             return this.btns[this.selectedIndex];
+    }
+
+    getSelectedLabel() {
+        if (this.btns[this.selectedIndex] == null)
+            return "";
+        else
+            return this.btns[this.selectedIndex].text;
     }
 
     select(i) {

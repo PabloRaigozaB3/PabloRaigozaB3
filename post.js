@@ -5,32 +5,146 @@ function loadPostScreen() {
     createRightSliders();
 }
 
+class PostData {
+    constructor(_rung="", _succ=false, _tipped=false, _gotUp=false, _ground=false, _term=false, _die=false, _driver=0, _shooter=0, _defense=0, _comments="Comments") {
+        this.rung = _rung; // string
+        this.succ = _succ;
+        this.tipped = _tipped; // bool
+        this.gotUp = _gotUp; // bool
+        this.term = _term; // bool
+        this.ground = _ground;
+        this.die = _die; // bool
+        this.driver = _driver; // int
+        this.shooter = _shooter; // int
+        this.defense = _defense; // int
+        this.comments = _comments // string
+    }
+}
+
+let postData = new PostData();
+
+class SliderDOM {
+    constructor(_text, _min, _max, _val, _step = 1) {
+        this.text = _text;
+        this.min = _min;
+        this.max = _max;
+        this.val = _val;
+        this.step = _step;
+
+
+        this.div = document.createElement('div');
+        this.div.id = this.text+"Div";
+        this.div.style = "display:flex; flex-direction: column; align-items:center;justify-content:left;";
+        this.div.style.padding = '0em';
+        this.div.style.margin = '.3em';
+        
+        this.label = document.createElement('h5');
+        this.label.id = this.text+"Label";
+        this.label.style.paddingBottom = '1em';
+        // this.label.style.paddingTop = '1em';
+        this.label.style.margin = '0em';
+        this.label.innerText = this.text+": "+this.val;
+        this.label.style.fontSize = ".5em";
+        
+    
+        this.slider = document.createElement('input');
+        this.slider.type = "range";
+        this.slider.min = this.min;
+        this.slider.max = this.max;
+        this.slider.value = this.val;
+        this.slider.id = this.text+"Slider";   
+        this.slider.className = 'slider';
+        this.slider.step = this.step;
+        this.slider.style.marginBottom = "1em";
+        
+        document.getElementById('skillsLabel').appendChild(this.div);
+        this.div.appendChild(this.label);
+        this.div.appendChild(this.slider);
+    }
+}
 function createRightSliders() {
-    let rightSlidersDiv = document.createElement('div');
-    rightSlidersDiv.id = "rightSlidersDiv";
-    rightSlidersDiv.style.position = "absolute";
-    rightSlidersDiv.style.left = POST_WIDTH+"px";
-    rightSlidersDiv.style.top = 0+"px";
-    rightSlidersDiv.style.width = window.innerWidth - POST_WIDTH+"px";
-    rightSlidersDiv.style.height = POST_HEIGHT+"px";
-    document.body.appendChild(rightSlidersDiv);
+    let skillDiv = document.createElement('div');
+    skillDiv.id = "skillDiv";
+    skillDiv.style.position = "absolute";
+    skillDiv.style.left = POST_WIDTH+"px";
+    skillDiv.style.top = 0+"px";
+    skillDiv.style.width = window.innerWidth - POST_WIDTH+"px";
+    skillDiv.style.height = POST_HEIGHT+"px";
+    document.body.appendChild(skillDiv);
 
     let rightSliderLabel = document.createElement('h1');
     rightSliderLabel.style.textAlign = "center";
     rightSliderLabel.style.fontSize = POST_HEIGHT/10+"px";
     rightSliderLabel.innerText = "SKILLS";
-    rightSlidersDiv.appendChild(rightSliderLabel);
+    rightSliderLabel.id = 'skillsLabel';
+    skillDiv.appendChild(rightSliderLabel);
 
-    let driverSlider = document.createElement('input');
-    driverSlider.style.textAlgin = "center";
-    driverSlider.style.width = "100%";driverSlider.type = "range";
-    driverSlider.min = "1";
-    driverSlider.min = "5";
-    driverSlider.value = "4";
-    driverSlider.step = "10";
-    driverSlider.id = "driverSlider";
+    let driverSlider = new SliderDOM("Driver", 0, 5, postData.driver);
+    driverSlider.slider.oninput = driverInput;
+    let shootingSlider = new SliderDOM("Shooting", 0, 5, postData.shooter);
+    shootingSlider.slider.oninput = shootingInput;
+    let defenseSlider = new SliderDOM("Defense", 0, 5, postData.defense);
+    defenseSlider.slider.oninput = defenseInput;
+
+    let commDiv = document.createElement('div');
+    commDiv.style = "display:flex; flex-direction: column; align-items:center;justify-content:left;";
+    // commDiv.style.height = "100%";
+    skillDiv.appendChild(commDiv);
+    let comments = document.createElement('textarea');
+    comments.id = "commentsText";
+    comments.innerText = postData.comments;
+    comments.style.width = "90%";
+    comments.style.padding = "0px";
+    comments.style.margin = "0 auto";
     
-    rightSlidersDiv.appendChild(driverSlider);
+    commDiv.appendChild(comments);
+}
+
+function unLoadPostScreen(e) {
+    
+
+    // this.rung = _rung; // string
+    // this.tipped = _tipped; // bool
+    // this.gotUp = _gotUp; // bool
+    // this.term = _term; // bool
+    // this.die = _die; // bool
+    // this.driver = _driver; // int
+    // this.shooter = _shooter; // int
+    // this.defense = _defense; // int
+    let rung = postElements[0].getSelectedLabel();
+    let succ = postElements[1].selected;
+    let tipped = postElements[2].selected;
+    let gotUp = postElements[3].selected;
+    let ground = postElements[4].selected;
+    let term = postElements[5].selected;
+    let die = postElements[6].selected;
+    
+    let driver = document.getElementById('DriverSlider').value;
+    let shooter = document.getElementById('ShootingSlider').value;
+    let defense = document.getElementById('DefenseSlider').value;
+
+    let comments = document.getElementById('commentsText').value;
+
+    postData = new PostData(rung, succ, tipped, gotUp, ground, term, die, driver, shooter, defense, comments);
+    document.getElementById("skillDiv").remove();
+}
+
+function driverInput(e) {
+    let lb = document.getElementById('DriverLabel');
+    let sld = document.getElementById('DriverSlider');
+    lb.innerText = "Driver: " + sld.value;
+}
+
+function shootingInput(e) {
+    let lb = document.getElementById('ShootingLabel');
+    let sld = document.getElementById('ShootingSlider');
+    lb.innerText = "Shooting: " + sld.value;
+}
+
+function defenseInput(e) {
+    let lb = document.getElementById('DefenseLabel');
+    let sld = document.getElementById('DefenseSlider');
+    lb.innerText = "Defense: " + sld.value;
 }
 
 function createPostCanv() {

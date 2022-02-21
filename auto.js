@@ -15,6 +15,13 @@ class AutoData {
         this.taxiLoc = point;
         this.didTaxi = _didTaxi;
     }
+
+    toString() {
+        let result = "";
+        for (let i = 0; i <this.shots.length; i++) {
+            // result = result + 
+        }
+    }
 }
 
 class Shot {
@@ -103,6 +110,8 @@ class TaxiBtn {
 }
 
 let taxiBtn;
+let autoData = new AutoData();
+
 
 function rightToGlobal(point) {
     return new Point(point.x + FIELD_WIDTH, point.y);
@@ -208,7 +217,6 @@ function createRightButtons() {
     
 }
 
-let autoData = new AutoData();
 
 function uppBtnMouseUp(start, e, self) {
     isShooting = true;
