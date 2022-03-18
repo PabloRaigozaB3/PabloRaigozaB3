@@ -31,7 +31,7 @@ function createBottomBtns() {
     liveBtn.clickedOut = saveLiveScreen;
     liveBtn.draw();
 
-    let postBtn = new CanvasBtn("POST", bottomCtx, new Point(FIELD_WIDTH, 0), RIGHT_WIDTH, BOTTOM_HEIGHT);
+    let postBtn = new CanvasBtn("END", bottomCtx, new Point(FIELD_WIDTH, 0), RIGHT_WIDTH, BOTTOM_HEIGHT);
     postBtn.clicked = loadPostScreen;
     postBtn.clickedOut = unLoadPostScreen;
     postBtn.draw();

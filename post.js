@@ -113,14 +113,17 @@ function unLoadPostScreen(self) {
     // this.driver = _driver; // int
     // this.shooter = _shooter; // int
     // this.defense = _defense; // int
-    let rung = postElements[0].getSelectedLabel();
-    let succ = postElements[1].selected;
+    // let rung = postElements[0].getSelectedLabel();
+    let rung = [];
+    for (let i = 0; i < 4; i++) {
+        rung.push(postElements[i].select);
+    }
     // let tipped = postElements[2].selected;
     // let gotUp = postElements[3].selected;
-    let noShow = postElements[2].selected;
-    let ground = postElements[3].selected;
-    let term = postElements[4].selected;
-    let die = postElements[5].selected;
+    let noShow = postElements[4].selected;
+    let ground = postElements[5].selected;
+    let term = postElements[6].selected;
+    let die = postElements[7].selected;
     
     let driver = document.getElementById('DriverSlider').value;
     let damage = document.getElementById('ShootingSlider').value;
@@ -128,9 +131,9 @@ function unLoadPostScreen(self) {
 
     let comments = document.getElementById('commentsText').value;
 
-    postData = new PostData(rung, succ, noShow, ground, term, die, driver, damage, defense, comments);
+    postData = new PostData(rung, noShow, ground, term, die, driver, damage, defense, comments);
     document.getElementById("skillDiv").remove();
-    self.text = "POST";
+    self.text = "END";
 }
 
 function driverInput(e) {
@@ -172,47 +175,57 @@ function createPostButtons() {
         
         let hangerWidth = POST_WIDTH/2;
         let hangerHeight = POST_HEIGHT*4/5;
-    
+        postCtx.fillStyle = "lightgrey";
+        postCtx.fillRect(0,0,hangerWidth,FIELD_HEIGHT);    
         let btnWidth = hangerWidth*2/(3);
         let btnHeight = hangerHeight*6/(7*4);
         let xSpace = hangerWidth/(3*2);
         let ySpace = hangerHeight/(7*5);
-    
-        let lowBtn = new CanvasBtn("LOW", postCtx, new Point(xSpace, ySpace), btnWidth, btnHeight);
-        let midBtn = new CanvasBtn("MID", postCtx, new Point(xSpace, btnHeight+ySpace*2), btnWidth, btnHeight);
-        let highBtn = new CanvasBtn("HIGH", postCtx, new Point(xSpace, 2*btnHeight+ySpace*3), btnWidth, btnHeight);
-        let travBtn = new CanvasBtn("TRAV", postCtx, new Point(xSpace, 3*btnHeight+ySpace*4), btnWidth, btnHeight);
-    
         let succWidth = hangerWidth*4/5;
         let succHeight = (POST_HEIGHT-hangerHeight)*7/8;
         let succXSpace = hangerWidth/(5*2);
         let succYSpace = (POST_HEIGHT-hangerHeight)/(8*2);
+
+        let hangerLbl = new CanvasBtn("HANGAR", postCtx, new Point(xSpace, ySpace), btnWidth, btnHeight)
+        hangerLbl.backgroundColor = "lightgrey";
+        hangerLbl.borderColor = "trans";
+        hangerLbl.draw();
+        let lowBtn = new CanvasBtn("LOW", postCtx, new Point(xSpace, succHeight+ySpace), btnWidth, btnHeight);
+        let midBtn = new CanvasBtn("MID", postCtx, new Point(xSpace, succHeight+btnHeight+ySpace*2), btnWidth, btnHeight);
+        let highBtn = new CanvasBtn("HIGH", postCtx, new Point(xSpace, succHeight+2*btnHeight+ySpace*3), btnWidth, btnHeight);
+        let travBtn = new CanvasBtn("TRAV", postCtx, new Point(xSpace, succHeight+3*btnHeight+ySpace*4), btnWidth, btnHeight);
     
-        let succBtn = new CanvasBtn("SUCCESSFUL?", postCtx, new Point(succXSpace, hangerHeight), succWidth, succHeight);
-        succBtn.clicked = succBtnClicked;
+      
     
-        let hangerRadio = new RadioBtn();
+        // let succBtn = new CanvasBtn("SUCCESSFUL?", postCtx, new Point(succXSpace, hangerHeight), succWidth, succHeight);
+        // succBtn.clicked = succBtnClicked;
+    
+        // let hangerRadio = new RadioBtn();
+        // hangerRadio.selectColor = "limegreen";
 
         if (postElements.length != 0) {
-            lowBtn.selected = postElements[0].btns[0].selected;
-            midBtn.selected = postElements[0].btns[1].selected;
-            highBtn.selected = postElements[0].btns[2].selected;
-            travBtn.selected = postElements[0].btns[3].selected;
-
-            if (postElements[1].selected)
-                succBtn.clicked(succBtn);
-            
+            lowBtn.selected = postElements[0].state;
+            midBtn.selected = postElements[1].state;
+            highBtn.selected = postElements[2].state;
+            travBtn.selected = postElements[3].state;
         }
-        succBtn.draw();
-        hangerRadio.btns.push(lowBtn);
-        hangerRadio.btns.push(midBtn);
-        hangerRadio.btns.push(highBtn);
-        hangerRadio.btns.push(travBtn);
+        lowBtn.clicked = v;
+        midBtn.clicked = v;
+        highBtn.clicked = v;
+        travBtn.clicked = v;
+        lowBtn.draw();
+        midBtn.draw();
+        highBtn.draw();
+        travBtn.draw();
+        // hangerRadio.btns.push(lowBtn);
+        // hangerRadio.btns.push(midBtn);
+        // hangerRadio.btns.push(highBtn);
+        // hangerRadio.btns.push(travBtn);
  
-        if (postElements.length != 0) {
-            hangerRadio.select(postElements[0].selectedIndex);
-        }
-        hangerRadio.draw();
+        // if (postElements.length != 0) {
+        //     hangerRadio.select(postElements[0].selectedIndex);
+        // }
+        // hangerRadio.draw();
 
         let tippedWidth = hangerWidth*3/(4*2);
         let tippedHeight = hangerHeight*.375*.75;
@@ -224,19 +237,69 @@ function createPostButtons() {
         // gotUpBtn.clickOccured = gotUpBtnClickOccured;
         // gotUpBtn.clicked = v;
 
-        let noShow = new CanvasBtn("NO SHOW", postCtx, new Point(POST_WIDTH*.75-hangerWidth*.375, POST_HEIGHT*.1875-tippedHeight/2), hangerWidth*.75, tippedHeight);
-        noShow.draw();
-        noShow.clicked = v;
-        let groundBtn = new CanvasBtn("GROUND", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, POST_HEIGHT*.5625-tippedHeight/2), tippedWidth, tippedHeight);
-        groundBtn.clicked = v;
+        let rightHeight = FIELD_HEIGHT / 6;
+        let yRight = (FIELD_HEIGHT / (6*10));
+        
+        postCtx.fillStyle = "blue";
+        postCtx.fillRect(hangerWidth, 0, POST_WIDTH-hangerWidth, 2*rightHeight);
+
+        let intakeLbl = new CanvasBtn("INTAKE", postCtx, new Point(hangerWidth, 0), POST_WIDTH-hangerWidth, rightHeight);
+        intakeLbl.backgroundColor = "blue";
+        intakeLbl.borderColor = "trans";
+        intakeLbl.draw();
+
+        let groundBtn = new CanvasBtn("GND", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, rightHeight-yRight), tippedWidth, rightHeight);
+        groundBtn.clicked = groundBtnClicked;
+        groundBtn.backgroundColor = "grey";
         groundBtn.draw();
-        let termBtn = new CanvasBtn("TERMINAL", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, POST_HEIGHT*.5625-tippedHeight/2), tippedWidth, tippedHeight);
-        termBtn.clicked = v;
+        let termBtn = new CanvasBtn("TMNL", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, rightHeight-yRight), tippedWidth, rightHeight);
+        termBtn.backgroundColor = "grey";
+        termBtn.clicked = groundBtnClicked;
         termBtn.draw();
         
-        let dieBtn = new CanvasBtn("DIE", postCtx, new Point(POST_WIDTH*.75-hangerWidth*.375, POST_HEIGHT*.875-tippedHeight/2), hangerWidth*.75, hangerHeight*.2)
-        dieBtn.clicked = v;
+        postCtx.fillStyle = "pink";
+        postCtx.fillRect(hangerWidth, rightHeight*2, POST_WIDTH-hangerWidth, rightHeight+3*yRight);
+
+        let dieBtnLbl = new CanvasBtn("DIED?", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, rightHeight*2+yRight*2), tippedWidth, rightHeight)
+        dieBtnLbl.backgroundColor = "pink";
+        dieBtnLbl.borderColor= "trans";
+        dieBtnLbl.draw();
+
+        let dieBtn = new CanvasBtn("NO", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, rightHeight*2+yRight*2), tippedWidth, rightHeight)
+        dieBtn.backgroundColor = "limegreen";
+        dieBtn.clicked = dieBtnClicked;
         dieBtn.draw();
+
+        postCtx.fillStyle = "blue";
+        postCtx.fillRect(hangerWidth, rightHeight*2+rightHeight+3*yRight, POST_WIDTH-hangerWidth, rightHeight+2*yRight);
+
+        let foulLbl = new CanvasBtn("FOUL?", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, rightHeight*3+yRight*4), tippedWidth, rightHeight)
+        foulLbl.backgroundColor = "blue";
+        foulLbl.borderColor= "trans";
+        foulLbl.draw();
+
+        let foulBtn = new CanvasBtn("NO", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, rightHeight*3+yRight*4), tippedWidth, rightHeight)
+        foulBtn.backgroundColor = "grey";
+        foulBtn.clicked = foulBtnClicked;
+        foulBtn.draw(); 
+        
+        postCtx.fillStyle = "pink";
+        postCtx.fillRect(hangerWidth, rightHeight*2+rightHeight+3*yRight+rightHeight+2*yRight, POST_WIDTH-hangerWidth, 2*rightHeight);
+
+        let noShowLbl = new CanvasBtn("SHOWED?", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, rightHeight*4+yRight*7), tippedWidth, rightHeight)
+        noShowLbl.backgroundColor = "pink";
+        noShowLbl.borderColor= "trans";
+        noShowLbl.draw();
+
+        let noShow = new CanvasBtn("NO", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, rightHeight*4+yRight*7), tippedWidth, rightHeight)
+        noShow.backgroundColor = "red";
+        noShow.clicked = noShowClicked;
+        noShow.draw();// noShow.draw();
+        // noShow.clicked = dieBtnClicked;
+        
+        // termBtn.draw();
+        
+        
 
         if (postElements.length != 0) {
             // if (postElements[3].selected)
@@ -245,19 +308,24 @@ function createPostButtons() {
             //     tippedBtn.clicked(tippedBtn);
             //     gotUpBtn.draw();
             // }
-            if (postElements[2].selected)
-                noShow.clicked(noShow);
-            if (postElements[3].selected)
-                groundBtn.clicked(groundBtn);
             if (postElements[4].selected)
-                termBtn.clicked(termBtn);
+                noShow.clicked(noShow);
             if (postElements[5].selected)
+                groundBtn.clicked(groundBtn);
+            if (postElements[6].selected)
+                termBtn.clicked(termBtn);
+            if (postElements[7].selected)
+                dieBtn.clicked(dieBtn);
+            if (postElements[8].selected)
                 dieBtn.clicked(dieBtn);
         }
 
         postElements = [];
-        postElements.push(hangerRadio);
-        postElements.push(succBtn);
+        // postElements.push(hangerRadio);
+        postElements.push(lowBtn);
+        postElements.push(midBtn);
+        postElements.push(highBtn);
+        postElements.push(travBtn);
         postElements.push(noShow);
         // postElements.push(tippedBtn);
         // postElements.push(gotUpBtn);
@@ -265,6 +333,8 @@ function createPostButtons() {
         postElements.push(groundBtn);
         postElements.push(termBtn);
         postElements.push(dieBtn);
+        postElements.push(foulBtn);
+
 
         
     // } else {
@@ -278,12 +348,46 @@ function createPostButtons() {
 }
 
 function dieBtnClicked(self) {
-    if (self.selected) {
-        self.backgroundColor = 'grey';
+    if (!self.selected) {
+        self.backgroundColor = 'red';
+        self.text = "YES";
     } else {
+        self.text = "NO";
         self.backgroundColor = 'limegreen';
     }
     self.selected = !self.selected;
+    self.draw();
+}
+
+function noShowClicked(self) {
+    if (self.selected) {
+        self.backgroundColor = 'red';
+        self.text = "NO";
+    } else {
+        self.text = "YES";
+        self.backgroundColor = 'limegreen';
+    }
+    self.selected = !self.selected;
+    self.draw();
+}
+
+function foulBtnClicked(self) {
+    self.state++;
+    if (self.state == 3)
+        self.state = 0;
+    
+    if (this.state == 0){
+        self.backgroundColor = 'grey';
+        self.text = "NO";
+    }else if (this.state == 1) {
+        self.backgroundColor = "yellow";
+        self.text = "YLW";
+    }
+    else {
+        self.backgroundColor = "red";
+        self.text = "RED"
+    }
+    
     self.draw();
 }
 
@@ -307,17 +411,40 @@ function gotUpBtnClickOccured(point) {
 }
 
 function v(self) {
+    self.state++;
+    if (self.state == 3)
+        self.state = 0;
+    // if (self.selected) {
+    //     self.backgroundColor = 'grey';
+    // } else {
+    //     self.backgroundColor = 'limegreen';
+    // }
+    // self.selected = !self.selected;
+    
+    if (this.state == 0)
+        self.backgroundColor = 'grey';
+    else if (this.state == 1)
+        self.backgroundColor = "red";
+    else
+        self.backgroundColor = "limegreen";
+    
+    self.draw();
+}
+
+function groundBtnClicked(self) {
     if (self.selected) {
         self.backgroundColor = 'grey';
     } else {
         self.backgroundColor = 'limegreen';
     }
     self.selected = !self.selected;
+    
     self.draw();
 }
 
 function postCanvasClick(e) {
     let point = new Point(e.x, e.y);
+    // postElements[0].clickOccured(point, true, false);
     for (let i = 0; i < postElements.length; i++) {
         postElements[i].clickOccured(point);
     }

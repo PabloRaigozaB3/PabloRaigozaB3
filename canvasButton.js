@@ -41,6 +41,7 @@ class CanvasBtn {
         this.inShiftingColor = false;
         this.transitionOver = function() {};
         this.transColorStatus = NO_SHOT;
+        this.state = 0;
     }
 
     setCtx(someCtx) {

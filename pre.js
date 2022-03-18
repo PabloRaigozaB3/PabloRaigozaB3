@@ -144,6 +144,16 @@ function createPreButtons() {
         resetBtn.clicked = resestBtnClicked;
         resetBtn.draw();
 
+        if (preElements.length != 0) {
+            roundBtns.select(preElements[0].selectedIndex);
+            botBtns.select(preElements[1].selectedIndex);
+            // resetBtn.select(preElements[2].selectedIndex);
+        
+            roundBtns.draw();
+            botBtns.draw();
+            // resetBtn.draw();
+        }
+
         preElements = [];
         preElements.push(roundBtns);
         preElements.push(botBtns);
