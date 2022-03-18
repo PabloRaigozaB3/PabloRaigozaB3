@@ -1,384 +1,417 @@
+document.body.addEventListener('touchmove', function(e) {
+    currentMouse = new Point(e.touches[0].clientX,e.touches[0].clientY);
+});
 // save the data locally
 class AutoData {
-    constructor() {
-        this.shots = [];
-        this.taxiLoc = new Point(-1,-1);
-        this.didTaxi = false;
-    }
-
-    addShot(someShot) {
-        if (someShot.status != NO_SHOT)
-            this.shots.push(someShot);
-    }
-
-    updateTaxi(point, _didTaxi) {
-        this.taxiLoc = point;
+    constructor(_shots=[], _taxiLoc=new 
+        Point(-1,-1), _didTaxi=false) {
+        this.taxiLoc = _taxiLoc;
         this.didTaxi = _didTaxi;
+        this.upper = 0;
+        this.lower = 0;
+        this.human = 0;
+        this.shots = _shots;
+    }
+    
+    isBallClicked(ball) {
+        for (let i = 0; i < this.shots.length; i++) {
+            if (this.shots[i] == ball)
+                return true;
+        }
+        return false;
     }
 
-    toString() {
-        let result = "";
-        for (let i = 0; i <this.shots.length; i++) {
-            // result = result + 
+    removeBall(ball) {
+        const index = this.shots.indexOf(ball);
+        if (index > -1) {
+            this.shots.splice(index, 1); // 2nd parameter means remove one item only
         }
     }
-}
 
-class Shot {
-    constructor(_loc, _status) {
-        this.loc = _loc;
-        this.status = _status;
-        this.isHuman = false;
-    }
-
-    increaseStatus() {
-        if (this.status == MADE_SHOT) {
-            this.status = NO_SHOT;
-        } else {
-            this.status++;
-        }
-    }
-}
-
-class TaxiBtn {
-    constructor(_btnSelector, _btnDragger) {
-        this.btnSelector = _btnSelector;
-        this.btnDragger = _btnDragger;
-        this.isDrag = false;
-        this.showDragger = false;
-    }
-
-    draw() {
-        if (this.showDragger) {
-            this.btnDragger.draw();
-        }
-        this.btnSelector.draw();
-    }
-
-    clickOccuredRight(point) {
-        if (this.btnSelector.clickOccured(point)) {
-            if (!this.btnSelector.isSelected) {
-                this.btnSelector.backgroundColor = 'limegreen';
-                this.showDragger = true;
+    draw(mainCtx) {
+        for (let i = 0; i < 12; i++) {
+            let point = new Point(xBallPos[i], yBallPos[i]);
+            if (this.isBallClicked(i)) {
+                mainCtx.fillStyle = "limegreen";
+            } else if(isBallRed(i)) {
+                mainCtx.fillStyle = "red";
             } else {
-                this.btnSelector.backgroundColor = "grey";
-                this.showDragger = false;
-                drawField(FIELD_WIDTH, FIELD_HEIGHT, document.getElementById('mainPanel').getContext('2d'));
+                mainCtx.fillStyle = "blue";
             }
-        
-            this.btnSelector.isSelected = !this.btnSelector.isSelected;
-            this.btnSelector.draw();
+            drawCircle(point, BALL_RADIUS, mainCtx);
+            mainCtx.fill();
         }
-        this.draw();
-    }
-
-    mouseDown(point) {
-        if (this.btnDragger.clickOccured(point)) {
-            this.isDrag = true;
-        } else {
-            this.isDrag = false;
-        }
-        return this.isDrag;
-    }
-
-    mouseMove(point) {
-        if (this.isDrag) {
-            point.x = Math.floor(point.x);
-            point.y = Math.floor(point.y);
-            
-            // this.btnDragger = new CanvasBtn("T", this.btnDragger.ctx, point, this.btnDragger.width, this.btnDragger.height);
-            this.btnDragger.point = new Point(point.x - this.btnDragger.width/2, point.y - this.btnDragger.height/2);
-            drawField(FIELD_WIDTH, FIELD_HEIGHT, document.getElementById('mainPanel').getContext('2d'));
-            this.btnDragger.draw();
-        }
-    }
-
-    mouseUp(point) {
-        this.isDrag = false;
-    }    
-
-    setCtxDragger(ctx) {
-        this.btnDragger.ctx = ctx;
-    }
-    setCtxSelector(ctx) {
-        this.btnSelector.ctx = ctx;
-    }
-
-    getDraggerLoc() {
-        return this.btnDragger.point;
+        if (this.taxiLoc.x == -1 || this.taxiLoc.y == -1)
+            return;
+        mainCtx.fillStyle = "green";
+        drawCircle(this.taxiLoc, BALL_RADIUS/2, mainCtx);
+        mainCtx.fill();
     }
 }
 
-let taxiBtn;
 let autoData = new AutoData();
-
-
-function rightToGlobal(point) {
-    return new Point(point.x + FIELD_WIDTH, point.y);
+function loadAutoScreen(e) {
+    clearAllCanvas();
+    loadField();
+    loadFieldCenter();
+    loadFieldButtons();
 }
-
-let mouseDownInRight = false;
 function loadField() {
     mainCanv = document.createElement('canvas');
     document.body.appendChild(mainCanv);
     mainCanv.id = "mainPanel";
     mainCtx = mainCanv.getContext('2d');
     mainCanv.style="position:absolute; left:0px; top:0px";
-    mainCanv.width = FIELD_WIDTH;
+    mainCanv.width = window.innerWidth;
     mainCanv.height = FIELD_HEIGHT;
-    mainCtx.fillStyle = "white";
-    mainCtx.fillRect(0,0,FIELD_WIDTH, FIELD_HEIGHT);
-    drawField(FIELD_WIDTH, FIELD_HEIGHT, mainCtx);
-    fieldIsShown = true;
-
-    mainCanv.addEventListener('mousedown', mainCanvasMouseDown);
-    mainCanv.addEventListener('touchstart', mainCanvasMouseDown);
-    mainCanv.addEventListener('touchmove', mainCanvasMouseMove);
-    mainCanv.addEventListener('touchend', rightCanvasMouseUp);
+    mainCtx.fillStyle = "darkgrey";
+    mainCtx.fillRect(0,0,window.innerWidth, FIELD_HEIGHT);
+    
     mainCanv.addEventListener('click', mainCanvasClick);
 }
 
-function loadRightCanv() {
-    rightCanv = document.createElement('canvas');
-    document.body.appendChild(rightCanv);
-    rightCanv.id = "rightPanel";
-    rightCtx = rightCanv.getContext('2d');
-    rightCanv.style="position:absolute; left:"+FIELD_WIDTH+"px; top:0px";
-    rightCanv.width = RIGHT_WIDTH;
-    rightCanv.height = RIGHT_HEIGHT;
-    rightCtx.fillStyle = "grey";
-    rightCtx.fillRect(0,0,RIGHT_WIDTH, RIGHT_HEIGHT);
 
-    rightCanv.addEventListener('click', rightCanvasClick);
+let xBallPos;
+let yBallPos;
 
-    rightCanv.addEventListener('mouseup', rightCanvasMouseUp);
-    // rightCanv.addEventListener('touchend', rightCanvasMouseUp)
+function populateBallPos(width, height, radius, ballRadius) {
+    xBallPos = [];
+    yBallPos = [];
+    let xSpacing = ballRadius*2;
+    let ySpacing = (height-2*(ballRadius+radius))/2;
+    xBallPos.push(width/2+xSpacing);
+    xBallPos.push(width/2+xSpacing+radius);
+    xBallPos.push(width/2+xSpacing+radius);
+    xBallPos.push(width/2+xSpacing+radius);
+    xBallPos.push(width/2+xSpacing+radius);
+    xBallPos.push(width/2+xSpacing);
+    xBallPos.push(width/2-xSpacing);
+    xBallPos.push(width/2-xSpacing-radius);
+    xBallPos.push(width/2-xSpacing-radius);
+    xBallPos.push(width/2-xSpacing-radius);
+    xBallPos.push(width/2-xSpacing-radius);
+    xBallPos.push(width/2-xSpacing);
+
+    yBallPos.push(ySpacing);
+    yBallPos.push(ySpacing*1.5);
+    yBallPos.push(height/2-ySpacing*1.5);
+    yBallPos.push(height/2+ySpacing*1.5);
+    yBallPos.push(height-ySpacing*1.5);
+    yBallPos.push(height-ySpacing);
+    yBallPos.push(height-ySpacing);
+    yBallPos.push(height-ySpacing*1.5);
+    yBallPos.push(height/2+ySpacing*1.5);
+    yBallPos.push(height/2-ySpacing*1.5);
+    yBallPos.push(ySpacing*1.5);
+    yBallPos.push(ySpacing);
+    CIRLCE_WIDTH = (xSpacing*4)+radius*2;
+    SIDE_WIDTH = (window.innerWidth - CIRLCE_WIDTH)/2;
+}
+function loadFieldCenter() {
+    let mainCanv = document.getElementById('mainPanel');
+    let mainCtx  = mainCanv.getContext('2d');
+    let width = window.innerWidth;
+    let height = FIELD_HEIGHT;
+
+    RADIUS = height/3;
+    let radius = RADIUS;
+    BALL_RADIUS = (height - radius*2) / 5;
+    let ballRadius = BALL_RADIUS;
+    populateBallPos(width, height, radius, ballRadius);
     
-    rightCanv.addEventListener('mousedown', rightCanvasMouseDown);
-    // rightCanv.addEventListener('touchstart', rightCanvasMouseDown);
+    mainCtx.fillStyle = "red";
+    drawCircle(new Point(xBallPos[0], yBallPos[0]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[1], yBallPos[1]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[3], yBallPos[3]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[5], yBallPos[5]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[8], yBallPos[8]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[10], yBallPos[10]), ballRadius, mainCtx);
+    mainCtx.fill();
+
+    mainCtx.fillStyle = "blue";
+    drawCircle(new Point(xBallPos[2], yBallPos[2]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[4], yBallPos[4]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[6], yBallPos[6]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[7], yBallPos[7]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[9], yBallPos[9]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[11], yBallPos[11]), ballRadius, mainCtx);
+    mainCtx.fill();
+
+    
+    drawWedge(new Point(width/2, height/2),
+    radius,
+    65,
+    245,
+    mainCtx);
+    mainCtx.fillStyle = "lightblue";
+    mainCtx.fill();
+    drawWedge(new Point(width/2, height/2),
+    radius,
+    245,
+    425,
+    mainCtx);
+    mainCtx.fillStyle = "pink";
+    mainCtx.fill();
+    
+    for (let i = 0; i < 6; i++) {
+        if (i < 3) {mainCtx.fillStyle = "blue";}
+        else {mainCtx.fillStyle = "red";}
+
+        drawWedge(new Point(width/2, height/2),
+        radius,
+        65+i*(60),
+        125+i*60, mainCtx);
+        mainCtx.strokeStyle = mainCtx.fillStyle;
+        mainCtx.lineWidth = 3;
+        mainCtx.stroke();
+    }
 }
 
-function loadAutoScreen(e) {
-    clearAllCanvas();
-    loadField();
-    loadRightCanv();
-    createRightButtons();
-    isAuto = true;
+let upDisp;
+let lowDisp;
+let hmnDisp;
+
+function loadFieldButtons() {
+    let mainCanv = document.getElementById('mainPanel');
+    let mainCtx  = mainCanv.getContext('2d');
+    let width = window.innerWidth;
+    let height = FIELD_HEIGHT;
+    let regBtnHeight = FIELD_HEIGHT/4;
+    
+    let taxiBtn  = new CanvasBtn("NO", mainCtx,new Point(SIDE_WIDTH/2,0),SIDE_WIDTH/2, regBtnHeight);
+    let taxiBtnLbl = new CanvasBtn("TAXI", mainCtx, new Point(0, 0),SIDE_WIDTH/2, regBtnHeight);
+    taxiBtnLbl.backgroundColor = "lightgrey";
+    taxiBtnLbl.borderColor = "lightgrey";
+    taxiBtnLbl.draw();
+    taxiBtn.backgroundColor="red";taxiBtn.draw();
+    taxiBtn.clicked = function(self) {
+        autoData.didTaxi = !autoData.didTaxi;
+        if (self.selected) {
+            self.backgroundColor = 'red';
+            self.text = "NO"
+        } else {
+            self.backgroundColor = 'limegreen';
+            self.text = "YES";
+        }
+        self.selected = !self.selected;
+        self.draw();
+    };
+
+    let matchNumberLbl = new CanvasBtn(preData.teamNum, mainCtx, new Point(CIRLCE_WIDTH+SIDE_WIDTH,0), SIDE_WIDTH, regBtnHeight);
+    // console.log(preData.matchNum)
+    matchNumberLbl.backgroundColor = "lightgrey";
+    matchNumberLbl.draw();
+    // console.log(matchNumberLbl)
+    let upBtnMinus  = new CanvasBtn("-", mainCtx,new Point(SIDE_WIDTH/2,regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    let upBtnLbl = new CanvasBtn("UP", mainCtx, new Point(0, regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    upBtnMinus.backgroundColor = "red";
+    upBtnLbl.backgroundColor = "lightgrey";
+    upBtnLbl.borderColor = "lightgrey";
+    upBtnLbl.draw();
+    upBtnMinus.draw();
+    upBtnMinus.clicked = function(self) {
+        autoData.upper = autoData.upper - 1;
+        if (autoData.upper <= 0)
+            autoData.upper = 0;
+        upDisp.text = autoData.upper.toString();
+        upDisp.draw();
+    }
+    // upBtnMinus.click = upBtnMinusClick;
+    
+    let upBtnPlus  = new CanvasBtn("+", mainCtx,new Point(CIRLCE_WIDTH+SIDE_WIDTH,regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    upDisp = new CanvasBtn("0", mainCtx, new Point(CIRLCE_WIDTH+SIDE_WIDTH+SIDE_WIDTH/2, regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    upBtnPlus.backgroundColor = "limegreen";
+    upDisp.backgroundColor = "lightgrey";
+    upDisp.borderColor = "trans";
+    upDisp.draw();
+    upBtnPlus.draw();
+    // taxiBtnYes.draw();
+    
+    upBtnPlus.clicked = function(self) {
+        autoData.upper = autoData.upper + 1;
+        upDisp.text = autoData.upper.toString();
+        upDisp.draw();
+    }
+    
+    let lowBtnMinus = new CanvasBtn("-", mainCtx,new Point(SIDE_WIDTH/2,2*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    let lowBtnLbl = new CanvasBtn("LOW", mainCtx,new Point(0,2*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    lowBtnLbl.backgroundColor = "lightgrey";
+    lowBtnLbl.borderColor = "lightgrey";
+    lowBtnMinus.backgroundColor = "red";
+    lowBtnLbl.draw();
+    lowBtnMinus.draw();
+
+    let lowBtnPlus  = new CanvasBtn("+", mainCtx,new Point(CIRLCE_WIDTH+SIDE_WIDTH,2*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    lowDisp = new CanvasBtn("0", mainCtx, new Point(CIRLCE_WIDTH+SIDE_WIDTH+SIDE_WIDTH/2, 2*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    lowBtnPlus.backgroundColor = "limegreen";
+    lowDisp.backgroundColor = "lightgrey";
+    lowDisp.borderColor = "trans";
+    lowDisp.draw();
+    lowBtnPlus.draw();
+
+    lowBtnMinus.clicked = function(self) {
+        autoData.lower = autoData.lower - 1;
+        if (autoData.lower <= 0)
+            autoData.lower = 0;
+        lowDisp.text = autoData.lower.toString();
+        lowDisp.draw();
+    }
+    lowBtnPlus.clicked = function(self) {
+        autoData.lower = autoData.lower + 1;
+        lowDisp.text = autoData.lower.toString();
+        lowDisp.draw();
+    }
+
+    let hmnBtnMinus = new CanvasBtn("-", mainCtx,new Point(SIDE_WIDTH/2,3*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    let hmnBtnLbl = new CanvasBtn("HMN", mainCtx,new Point(0,3*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    hmnBtnMinus.backgroundColor = "red";
+    hmnBtnLbl.backgroundColor = "lightgrey";
+    hmnBtnLbl.borderColor = "lightgrey";
+    hmnBtnLbl.draw();
+    hmnBtnMinus.draw();
+
+    let hmnBtnPlus  = new CanvasBtn("+", mainCtx,new Point(CIRLCE_WIDTH+SIDE_WIDTH,3*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    hmnDisp = new CanvasBtn("0", mainCtx, new Point(CIRLCE_WIDTH+SIDE_WIDTH+SIDE_WIDTH/2, 3*regBtnHeight),SIDE_WIDTH/2, regBtnHeight);
+    hmnBtnPlus.backgroundColor = "limegreen";
+    hmnDisp.backgroundColor = "lightgrey";
+    hmnDisp.borderColor = "trans";
+    hmnDisp.draw();
+    hmnBtnPlus.draw();
+
+    hmnBtnMinus.clicked = function(self) {
+        autoData.human = autoData.human - 1;
+        if (autoData.human <= 0)
+            autoData.human = 0;
+        hmnDisp.text = autoData.human.toString();
+        hmnDisp.draw();
+    }
+    
+    hmnBtnPlus.clicked = function(self) {
+        autoData.human = autoData.human + 1;
+        hmnDisp.text = autoData.human.toString();
+        hmnDisp.draw();
+    }
+
+    if (autoData.didTaxi)
+        taxiBtn.clicked(taxiBtn);
+    
+    if (autoElements.length != 0) {
+        
+        upDisp.text = ""+autoData.upper;
+        lowDisp.text = ""+autoData.lower;
+        hmnDisp.text = ""+autoData.human;
+        upDisp.draw();
+        lowDisp.draw();
+        hmnDisp.draw();
+    }
+
+    autoElements = [];
+    autoElements.push(taxiBtn);
+    // autoElements.push(taxiBtnYes);
+    // autoElements.push(taxiRadio)
+    autoElements.push(upBtnMinus);
+    autoElements.push(upBtnPlus)
+    // autoElements.push(upRadio);
+    autoElements.push(lowBtnMinus);
+    autoElements.push(lowBtnPlus);
+    autoElements.push(hmnBtnMinus);
+    autoElements.push(hmnBtnPlus);
+    autoData.draw(mainCtx);
 }
 
 function saveAutoScreen() {
-    isAuto = false;
-    autoData.updateTaxi(taxiBtn.getDraggerLoc(), taxiBtn.showDragger);
-}
 
-function createRightButtons() {
-    //if (document.getElementById('rightPanel') != null) {
-        let rightCtx = document.getElementById('rightPanel').getContext('2d');
-        // if (rightElements.length == 0) {
-            let uppBtn = new CanvasBtn("UPPER", rightCtx, new Point(0,0), RIGHT_WIDTH, FIELD_HEIGHT*.4);
-            uppBtn.mouseUp = uppBtnMouseUp;
-            uppBtn.clicked = uppBtnClick;
-            uppBtn.transitionOver = uppBtnTransitionOver;
-            let lowBtn = new CanvasBtn("LOW", rightCtx, new Point(0,FIELD_HEIGHT*.4), RIGHT_WIDTH, FIELD_HEIGHT*.4);
-            lowBtn.mouseUp = lowBtnMouseUp;
-            lowBtn.clicked = lowBtnClick;
-            lowBtn.transitionOver = lowBtnTransitionOver;
-
-            let taxiBtnSelector = new CanvasBtn("TAXI", rightCtx, new Point(0,FIELD_HEIGHT*.8), RIGHT_WIDTH, FIELD_HEIGHT*.2);
-            let taxiBtnDragger = new CanvasBtn("T", document.getElementById('mainPanel').getContext('2d'), new Point(0,0), FIELD_WIDTH/20, FIELD_WIDTH/15);    
-            if (taxiBtn == null) {
-                taxiBtn = new TaxiBtn(taxiBtnSelector, taxiBtnDragger);    
-            } else {
-                taxiBtn.btnDragger.ctx = document.getElementById('mainPanel').getContext('2d');
-                taxiBtn.btnSelector.ctx = rightCtx;
-                taxiBtn.btnSelector.point = new Point(0, FIELD_HEIGHT*.8);
-                taxiBtn.btnSelector.width = RIGHT_WIDTH;
-                taxiBtn.btnSelector.height = FIELD_HEIGHT*.2;
-            }
-            taxiBtn.draw();
-            
-            
-
-            let sideBtns = new RadioBtn();
-            sideBtns.btns.push(uppBtn);
-            sideBtns.btns.push(lowBtn);
-            sideBtns.draw();
-            rightElements.push(sideBtns);
-    //     } else {
-    //         for (let i = 0; i < rightElements.length; i++) {
-    //             rightElements[i].setCtx(rightCtx);
-    //             rightElements[i].draw();
-    //         }
-    //         taxiBtn.btnSelector.ctx = rightCtx;
-    //         taxiBtn.btnDragger.ctx = document.getElementById('mainPanel').getContext('2d');
-    //         taxiBtn.draw();
-    //     }
-    // }
-    
-}
-
-
-function uppBtnMouseUp(start, e, self) {
-    isShooting = true;
-    self.transitionColor();
-    if (inTriangle(start)) {
-        currentShot.isHuman = true;
-    }
-}
-function uppBtnClick(self) {
-    if (self.inShiftingColor && isShooting) {
-        currentShot.increaseStatus();
-        self.updateTransitionColor(currentShot.status);
-    }
-}
-
-let isAuto = false;
-
-function uppBtnTransitionOver() {
-    drawField(FIELD_WIDTH, FIELD_HEIGHT, document.getElementById('mainPanel').getContext('2d'));
-    if (isAuto) {
-        autoData.addShot(currentShot);
-    } else {
-        liveData.addShot(currentShot);
-    }
-    currentShot = null;
-    isShooting = false;
-    taxiBtn.draw();
-}
-
-function lowBtnMouseUp(start, e, self) {
-    isShooting = true;
-    self.transitionColor();
-    if (inTriangle(start)) {
-        currentShot.isHuman = true;
-    }
-}
-function lowBtnClick(self) {
-    if (self.inShiftingColor && isShooting) {
-        currentShot.increaseStatus();
-        self.updateTransitionColor(currentShot.status);
-    }
-}
-function lowBtnTransitionOver() {
-    drawField(FIELD_WIDTH, FIELD_HEIGHT, document.getElementById('mainPanel').getContext('2d'));
-    if (isAuto) {
-        autoData.addShot(currentShot);
-    } else {
-        liveData.addShot(currentShot);
-    }
-    currentShot = null;
-    isShooting = false;
-    taxiBtn.draw();
-}
-
-function humBtnMouseUp(start, e, self) {
-    
-}
-function taxiBtnClick(self) {
-    
-}
-let startPtn = null;
-function rightCanvasMouseUp(e) {
-    let globalPoint = new Point(e.x, e.y);
-    if (isTouch) {globalPoint = new Point(Math.floor(currentMouse.x), Math.floor(currentMouse.y));}
-    let point = globalToRight(globalPoint);
-    if (!taxiBtn.isDrag && !isShooting) {
-        if (!mouseDownInRight) {
-            for (let i = 0; i < rightElements.length; i++) {
-                rightElements[i].mouseUpOccured(currentShot.loc, point);
-            }
-        } else {
-
-        }
-        
-        // e.preventDefault();
-    }
-    taxiBtn.mouseUp(point);
-    mouseDownInRight = false;
-}
-
-function rightCanvasClick(e) {
-    let point = globalToRight(new Point(e.x, e.y));
-    point.x = Math.floor(point.x);
-    point.y = Math.floor(point.y);
-    for (let i = 0; i < rightElements.length; i++) {
-        for (let j = 0; j < rightElements[i].btns.length; j++) {
-            rightElements[i].btns[j].clickOccured(point);
-        }
-    }
-
-    taxiBtn.clickOccuredRight(point);
-    e.preventDefault();
-}
-
-function rightCanvasMouseDown(e) {
-    mouseDownInRight = true;
-    startPtn = currentMouse;
-    
-    e.preventDefault();
-}
-
-function globalToRight(point) {
-    return new Point(point.x-FIELD_WIDTH, point.y);
-}
-let currentShot = null;
-let isShooting = false;
-function mainCanvasMouseDown(e) {
-    if (e.touches == null || e.touches.length == 0) {return;}
-    let point = new Point(e.touches[0].clientX,e.touches[0].clientY);
-    let mainCtx = document.getElementById('mainPanel').getContext('2d');
-    if (!taxiBtn.mouseDown(point) && !isShooting) {    
-        drawField(FIELD_WIDTH, FIELD_HEIGHT, mainCtx);
-        mainCtx.fillStyle = 'limegreen';
-        drawCircle(point,window.innerWidth*.025,mainCtx);
-
-        mainCtx.fill();
-        currentShot = new Shot(point, NO_SHOT);
-    }
-    
-}
-
-let currentMouse = new Point(0,0);
-document.body.addEventListener('touchmove', function(e) {
-    currentMouse = new Point(e.touches[0].clientX,e.touches[0].clientY);
-});
-
-function mainCanvasMouseMove(e) {
-    let mainCtx = document.getElementById('mainPanel').getContext('2d');
-    currentMouse = new Point(e.touches[0].clientX,e.touches[0].clientY);
-
-    if (!taxiBtn.isDrag && e.touches.length != 0 && !isShooting) {
-        drawField(FIELD_WIDTH, FIELD_HEIGHT, mainCtx);
-
-        drawLine(new Point(currentShot.loc.x, currentShot.loc.y), new Point(currentMouse.x, currentMouse.y));
-        taxiBtn.draw();
-        mainCtx.strokeStyle = 'black';
-        mainCtx.stroke();
-
-        mainCtx.fillStyle = 'limegreen';
-        drawCircle(currentShot.loc,window.innerWidth*.025,mainCtx);
-        mainCtx.fill();
-        drawCircle(currentMouse,window.innerWidth*.025,mainCtx);        
-        mainCtx.fill();
-    }
-    taxiBtn.mouseMove(currentMouse);
 }
 
 function mainCanvasClick(e) {
+    let point = new Point(e.x, e.y);
+    for (let i = 0; i < autoElements.length; i++) {
+        if (autoElements[i].clickOccured(point))
+            return;
+    }
+
+    let mainCtx = document.getElementById("mainPanel").getContext("2d");
+    for (let i = 0; i < 12; i++) {
+        let p1 = new Point(xBallPos[i], yBallPos[i]);
+        // console.log(dist(point, p1));
+        if (dist(point, p1) < BALL_RADIUS) {
+            if (autoData.isBallClicked(i)) {
+                autoData.removeBall(i);
+                if (isBallRed(i))
+                    mainCtx.fillStyle = "red";
+                else
+                    mainCtx.fillStyle = "blue";
+            } else {
+                autoData.shots.push(i);
+                mainCtx.fillStyle = "limegreen";
+            }
+            drawCircle(p1, BALL_RADIUS, mainCtx);
+            mainCtx.fill();
+            return;
+        }
+    }
     
+    let width = window.innerWidth;
+    let height = FIELD_HEIGHT;
+    let center = new Point(width/2, height/2);
+    let radius = RADIUS;
+    let gap = RADIUS-dist(point, center);
+
+    
+    if (dist(new Point(width/2, height/2), point) < RADIUS) {
+        if (gap < BALL_RADIUS/2)
+            return;
+        drawWedge(new Point(width/2, height/2),
+        radius,
+        65,
+        245,
+        mainCtx);
+        mainCtx.fillStyle = "lightblue";
+        mainCtx.fill();
+        drawWedge(new Point(width/2, height/2),
+        radius,
+        245,
+        425,
+        mainCtx);
+        mainCtx.fillStyle = "pink";
+        mainCtx.fill();
+        
+        for (let i = 0; i < 6; i++) {
+            if (i < 3) {mainCtx.fillStyle = "blue";}
+            else {mainCtx.fillStyle = "red";}
+
+            drawWedge(new Point(width/2, height/2),
+            radius,
+            65+i*(60),
+            125+i*60, mainCtx);
+            mainCtx.strokeStyle = mainCtx.fillStyle;
+            mainCtx.lineWidth = 3;
+            mainCtx.stroke();
+        }
+        mainCtx.fillStyle = "green";
+        drawCircle(point, BALL_RADIUS/2, mainCtx);
+        mainCtx.fill();
+
+        autoData.taxiLoc = point;
+    }
 }
 
-function globalToTopTriangle(point) {
-    let mainWidth = document.getElementById('mainPanel').width;
-    let triangleWidth = getTerminalWidth(mainWidth);
-    return new Point(point.x - (mainWidth - triangleWidth), point.y);
+function isBallRed(ball) {
+    return(ball == 0 || ball==1 || ball==3 || ball==5 || ball==8 || ball==10);
 }
 
-function inTriangle(point) {
-    let triangleWidth = getTerminalWidth(document.getElementById('mainPanel').width);
-    let triangleHeight = getTerminalHeight(document.getElementById('mainPanel').height);
-
-    let newPoint = globalToTopTriangle(point);
-    let yLevel = (newPoint.x * triangleHeight) / triangleWidth;
-    return (newPoint.y < yLevel);
+function dist(p1, p2) {
+    let res = Math.sqrt(Math.pow(p1.x-p2.x, 2) + Math.pow(p1.y-p2.y,2));
+    // console.log(res);
+    return res;
 }

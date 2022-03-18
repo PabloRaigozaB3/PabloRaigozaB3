@@ -16,6 +16,11 @@ let BOTTOM_HEIGHT = window.innerHeight-FIELD_HEIGHT;
 
 let RIGHT_WIDTH = window.innerWidth-FIELD_WIDTH;
 let RIGHT_HEIGHT = FIELD_HEIGHT;
+let CIRLCE_WIDTH = 0;
+let SIDE_WIDTH = 0;
+
+let RADIUS = 0;
+let BALL_RADIUS = 0;
 
 const START_TRANS_R = 78;
 const START_TRANS_G = 78;

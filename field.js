@@ -8,37 +8,34 @@ function getTerminalHeight(height) {
     return (terminalHeightAct * height) / 324;
 }
 
-function drawField(width, height, ctx) {
+function drawField(width, height, ctx, point = new Point(0,0)) {
     ctx.fillStyle = 'white';
-    ctx.fillRect(0,0,width, height);
+    ctx.fillRect(point.x,point.y,width, height);
     let hangarWidth = (width*127) / (2*324);
     let hangarHeight = (height*114) / (2*162);
-
-    
-    
 
     let terminalWidth = getTerminalWidth(width);
     let terminalHeight = getTerminalHeight(height);
     ctx.fillStyle = 'blue';
-    ctx.fillRect(0,0,hangarWidth,hangarHeight);
+    ctx.fillRect(point.x,point.y,hangarWidth,hangarHeight);
 
     ctx.fillStyle = 'red';
-    ctx.fillRect(width-hangarWidth,height-hangarHeight,hangarWidth,hangarHeight);
+    ctx.fillRect(point.x+width-hangarWidth,point.y+height-hangarHeight,hangarWidth,hangarHeight);
 
     ctx.fillStyle = 'blue';
-    drawTriangle(new Point(0,height-terminalHeight),
-             new Point(0, height),
-             new Point(terminalWidth, height), ctx);
+    drawTriangle(new Point(point.x,point.y+height-terminalHeight),
+             new Point(point.x, point.y+height),
+             new Point(point.x+terminalWidth, point.y+height), ctx);
     ctx.fillStyle = 'red';
-    drawTriangle(new Point(width-terminalWidth,0),
-             new Point(width, 0),
-             new Point(width, terminalHeight), ctx);
+    drawTriangle(new Point(point.x+width-terminalWidth,point.y),
+             new Point(width+point.x, point.y),
+             new Point(width+point.x, point.y+terminalHeight), ctx);
 
     for (let i = 0; i < 4; i++) {
         if (i < 2) {ctx.fillStyle = "blue";}
         else {ctx.fillStyle = "red";}
 
-        drawWedge(new Point(width/2, height/2),
+        drawWedge(new Point(point.x+width/2, point.y+height/2),
         height/3,
         65+i*(90),
         155+i*90, ctx);
@@ -54,7 +51,7 @@ function drawField(width, height, ctx) {
     //       360);
     // ctx.fill();
     ctx.fillStyle = "black";
-    drawWedge(new Point(width/2, height/2),
+    drawWedge(new Point(point.x+width/2, point.y+height/2),
           height/9,
           0,
           360, ctx);

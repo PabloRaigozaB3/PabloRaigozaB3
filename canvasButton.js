@@ -1,8 +1,9 @@
 let mainElements = [];
-let rightElements = [];
+let autoElements = [];
 let bottomElements = [];
 let preElements = [];
 let postElements = [];
+let liveElements = [];
 class Point {
     constructor(_x, _y) {
         this.x = _x;
@@ -21,7 +22,7 @@ class CanvasBtn {
     constructor(_text, _ctx, _point, _width, _height) {
         this.point = _point;
         this.backgroundColor = "grey";
-        this.borderColor = "red";
+        this.borderColor = "black";
         this.textColor = "black";
         this.fontSize = 30;
         this.font = "Arial";
@@ -59,6 +60,7 @@ class CanvasBtn {
         }
         
         if (this.borderColor != "trans") {
+            this.ctx.strokeStyle = this.borderColor;
             this.ctx.fillStyle = this.borderColor;
             this.ctx.strokeRect(this.point.x, this.point.y, this.width, this.height);
         }
@@ -172,7 +174,7 @@ class RadioBtn {
         for(let i = 0; i < this.btns.length; i++) {
             if (this.btns[i].isInside(new Point(e.x, e.y)) && this.selectedIndex != i) {
                 if (this.selectedIndex != -1) {
-                    this.btns[this.selectedIndex].clickedOut();
+                    this.btns[this.selectedIndex].clickedOut(this.btns[this.selectedIndex]);
                     if (display) {
                         this.btns[this.selectedIndex].backgroundColor = this.backgroundColor; // redraw old btn
                         this.btns[this.selectedIndex].draw();  

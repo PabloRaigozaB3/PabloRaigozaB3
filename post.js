@@ -1,21 +1,21 @@
-function loadPostScreen() {
+function loadPostScreen(self) {
     clearAllCanvas();
     createPostCanv();
     createPostButtons();
     createRightSliders();
+    self.text = "SUBMIT"
 }
 
 class PostData {
-    constructor(_rung="", _succ=false, _tipped=false, _gotUp=false, _ground=false, _term=false, _die=false, _driver=0, _shooter=0, _defense=0, _comments="Comments") {
+    constructor(_rung="", _succ=false, _noShow=false, _ground=false, _term=false, _die=false, _driver=1, _damage=1, _defense=1, _comments="Comments") {
         this.rung = _rung; // string
         this.succ = _succ;
-        this.tipped = _tipped; // bool
-        this.gotUp = _gotUp; // bool
+        this.noShow = _noShow;
         this.term = _term; // bool
         this.ground = _ground;
         this.die = _die; // bool
         this.driver = _driver; // int
-        this.shooter = _shooter; // int
+        this.damage = _damage; // int
         this.defense = _defense; // int
         this.comments = _comments // string
     }
@@ -44,6 +44,8 @@ class SliderDOM {
         // this.label.style.paddingTop = '1em';
         this.label.style.margin = '0em';
         this.label.innerText = this.text+": "+this.val;
+        if (this.text === "Shooting")
+            this.label.innerText = "Damage: "+this.val;
         this.label.style.fontSize = ".5em";
         
     
@@ -79,11 +81,11 @@ function createRightSliders() {
     rightSliderLabel.id = 'skillsLabel';
     skillDiv.appendChild(rightSliderLabel);
 
-    let driverSlider = new SliderDOM("Driver", 0, 5, postData.driver);
+    let driverSlider = new SliderDOM("Driver", 1, 5, postData.driver);
     driverSlider.slider.oninput = driverInput;
-    let shootingSlider = new SliderDOM("Shooting", 0, 5, postData.shooter);
+    let shootingSlider = new SliderDOM("Shooting", 1, 5, postData.damage);
     shootingSlider.slider.oninput = shootingInput;
-    let defenseSlider = new SliderDOM("Defense", 0, 5, postData.defense);
+    let defenseSlider = new SliderDOM("Defense", 1, 5, postData.defense);
     defenseSlider.slider.oninput = defenseInput;
 
     let commDiv = document.createElement('div');
@@ -100,7 +102,7 @@ function createRightSliders() {
     commDiv.appendChild(comments);
 }
 
-function unLoadPostScreen(e) {
+function unLoadPostScreen(self) {
     
 
     // this.rung = _rung; // string
@@ -113,20 +115,22 @@ function unLoadPostScreen(e) {
     // this.defense = _defense; // int
     let rung = postElements[0].getSelectedLabel();
     let succ = postElements[1].selected;
-    let tipped = postElements[2].selected;
-    let gotUp = postElements[3].selected;
-    let ground = postElements[4].selected;
-    let term = postElements[5].selected;
-    let die = postElements[6].selected;
+    // let tipped = postElements[2].selected;
+    // let gotUp = postElements[3].selected;
+    let noShow = postElements[2].selected;
+    let ground = postElements[3].selected;
+    let term = postElements[4].selected;
+    let die = postElements[5].selected;
     
     let driver = document.getElementById('DriverSlider').value;
-    let shooter = document.getElementById('ShootingSlider').value;
+    let damage = document.getElementById('ShootingSlider').value;
     let defense = document.getElementById('DefenseSlider').value;
 
     let comments = document.getElementById('commentsText').value;
 
-    postData = new PostData(rung, succ, tipped, gotUp, ground, term, die, driver, shooter, defense, comments);
+    postData = new PostData(rung, succ, noShow, ground, term, die, driver, damage, defense, comments);
     document.getElementById("skillDiv").remove();
+    self.text = "POST";
 }
 
 function driverInput(e) {
@@ -138,7 +142,7 @@ function driverInput(e) {
 function shootingInput(e) {
     let lb = document.getElementById('ShootingLabel');
     let sld = document.getElementById('ShootingSlider');
-    lb.innerText = "Shooting: " + sld.value;
+    lb.innerText = "Damage: " + sld.value;
 }
 
 function defenseInput(e) {
@@ -213,17 +217,20 @@ function createPostButtons() {
         let tippedWidth = hangerWidth*3/(4*2);
         let tippedHeight = hangerHeight*.375*.75;
         
-        let tippedBtn = new CanvasBtn("TIPPED", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2,POST_HEIGHT*.1875-tippedHeight/2), tippedWidth, tippedHeight);
-        tippedBtn.clicked = tippedBtnClicked;
-        tippedBtn.draw();
-        let gotUpBtn = new CanvasBtn("GOT UP", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2,POST_HEIGHT*.1875-tippedHeight/2), tippedWidth, tippedHeight);
-        gotUpBtn.clickOccured = gotUpBtnClickOccured;
-        gotUpBtn.clicked = v;
+        // let tippedBtn = new CanvasBtn("TIPPED", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2,POST_HEIGHT*.1875-tippedHeight/2), tippedWidth, tippedHeight);
+        // tippedBtn.clicked = tippedBtnClicked;
+        // tippedBtn.draw();
+        // let gotUpBtn = new CanvasBtn("GOT UP", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2,POST_HEIGHT*.1875-tippedHeight/2), tippedWidth, tippedHeight);
+        // gotUpBtn.clickOccured = gotUpBtnClickOccured;
+        // gotUpBtn.clicked = v;
 
-        let groundBtn = new CanvasBtn("GROUND", postCtx, new Point(tippedBtn.point.x, POST_HEIGHT*.5625-tippedHeight/2), tippedWidth, tippedHeight);
+        let noShow = new CanvasBtn("NO SHOW", postCtx, new Point(POST_WIDTH*.75-hangerWidth*.375, POST_HEIGHT*.1875-tippedHeight/2), hangerWidth*.75, tippedHeight);
+        noShow.draw();
+        noShow.clicked = v;
+        let groundBtn = new CanvasBtn("GROUND", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, POST_HEIGHT*.5625-tippedHeight/2), tippedWidth, tippedHeight);
         groundBtn.clicked = v;
         groundBtn.draw();
-        let termBtn = new CanvasBtn("TERMINAL", postCtx, new Point(gotUpBtn.point.x, groundBtn.point.y), tippedWidth, tippedHeight);
+        let termBtn = new CanvasBtn("TERMINAL", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, POST_HEIGHT*.5625-tippedHeight/2), tippedWidth, tippedHeight);
         termBtn.clicked = v;
         termBtn.draw();
         
@@ -232,25 +239,28 @@ function createPostButtons() {
         dieBtn.draw();
 
         if (postElements.length != 0) {
+            // if (postElements[3].selected)
+            //     gotUpBtn.clicked(gotUpBtn);
+            // if (postElements[2].selected) {
+            //     tippedBtn.clicked(tippedBtn);
+            //     gotUpBtn.draw();
+            // }
+            if (postElements[2].selected)
+                noShow.clicked(noShow);
             if (postElements[3].selected)
-                gotUpBtn.clicked(gotUpBtn);
-            if (postElements[2].selected) {
-                tippedBtn.clicked(tippedBtn);
-                gotUpBtn.draw();
-            }
-            if (postElements[4].selected)
                 groundBtn.clicked(groundBtn);
-            if (postElements[5].selected)
+            if (postElements[4].selected)
                 termBtn.clicked(termBtn);
-            if (postElements[6].selected)
+            if (postElements[5].selected)
                 dieBtn.clicked(dieBtn);
         }
 
         postElements = [];
         postElements.push(hangerRadio);
         postElements.push(succBtn);
-        postElements.push(tippedBtn);
-        postElements.push(gotUpBtn);
+        postElements.push(noShow);
+        // postElements.push(tippedBtn);
+        // postElements.push(gotUpBtn);
 
         postElements.push(groundBtn);
         postElements.push(termBtn);

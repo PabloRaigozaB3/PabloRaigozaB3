@@ -1,3 +1,5 @@
+// add some comments
+
 function loadBottomCanv() {
     clearAllCanvas();
     clearElement('bottomPanel');
@@ -59,7 +61,6 @@ function bottomCanvClicked(e) {
         if (window.innerHeight > window.innerWidth) {
             side = window.innerWidth;
         }
-        let stringify = "HELLA";
         let qrDiv = document.createElement('div');
         qrDiv.id = "qrDiv";
         qrDiv.style = "display:flex; flex-direction: column; align-items:center;justify-content:left;";
@@ -81,14 +82,27 @@ function bottomCanvClicked(e) {
         qrDiv.appendChild(theQRDiv);
         document.body.appendChild(qrDiv);
 
+        // let autoShort = autoData.export();
+        // let liveShort = liveData.export();
+        let data = {
+            preData,
+            autoData,
+            liveData,
+            postData
+        };
 
         let qr = new QRCode(theQRDiv);
-        qr.makeCode(stringify);
+        qr.makeCode(JSON.stringify(data));
+        console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data).length);
         theQRDiv.style.position = "absolute";
         let theSide = theQRDiv.offsetWidth;
         theQRDiv.style.left  = (window.innerWidth-theSide)/2+"px";
         theQRDiv.style.top = (window.innerHeight-theSide)/2+"px";
         // qr.makeCode(stringify);
+
+        
+
     }
     for (let i = 0; i < bottomElements.length; i++) {
         bottomElements[i].clickOccured(point);

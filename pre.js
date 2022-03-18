@@ -20,9 +20,8 @@ class TextInput {
         this.div.appendChild(this.input);
     }
 }
-let savedPreData = null;
 class PreData {
-    constructor(_scountInit, _teamNum, _matchNum, _roundType, _botType) {
+    constructor(_scountInit="", _teamNum="", _matchNum="", _roundType="", _botType="") {
         this.scoutInit = _scountInit;
         this.teamNum = _teamNum;
         this.matchNum = _matchNum;
@@ -38,6 +37,7 @@ class PreData {
                   this.botType;
     }
 }
+let preData = new PreData();
 
 function loadPreScreen(e) {
     clearAllCanvas();
@@ -58,11 +58,9 @@ function loadPreScreen(e) {
     matchInput.div.style = divStyle;
     matchInput.input.style.width = "3em";
  
-    if (savedPreData != null) {
-        scouterInput.input.value = savedPreData.scoutInit;
-        teamInput.input.value = savedPreData.teamNum;
-        matchInput.input.value = savedPreData.matchNum;
-    }
+    scouterInput.input.value = preData.scoutInit;
+    teamInput.input.value = preData.teamNum;
+    matchInput.input.value = preData.matchNum;
 
     preDiv.appendChild(scouterInput.div);
     preDiv.appendChild(teamInput.div);
@@ -93,7 +91,7 @@ function savePreScreen(e) {
     let roundType = preElements[0].getSelected().text;
     let botType = preElements[1].getSelected().text;
     
-    savedPreData = new PreData(scoutInit, teamNum, matchNum, roundType, botType); 
+    preData = new PreData(scoutInit, teamNum, matchNum, roundType, botType); 
 }
 
 function createPreButtons() {
