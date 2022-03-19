@@ -3,8 +3,7 @@ document.body.addEventListener('touchmove', function(e) {
 });
 // save the data locally
 class AutoData {
-    constructor(_shots=[], _taxiLoc=new 
-        Point(-1,-1), _didTaxi=false) {
+    constructor(_shots=[], _taxiLoc=new Point(-1,-1), _didTaxi=false) {
         this.taxiLoc = _taxiLoc;
         this.didTaxi = _didTaxi;
         this.upper = 0;
@@ -48,6 +47,16 @@ class AutoData {
         mainCtx.fill();
     }
 }
+
+// class AutoDataExport {
+//     constructor(_shots, _taxiLoc, _didTaxi) {
+//         this.taxiLoc = _taxiLoc;
+//         this.didTaxi = _didTaxi;
+//         for (let i = 0; i < _shots.length; i++) {
+//             let r = dist(_shots[i], new Point(width/2, height/2)).toFixed(5);
+//         }
+//     }
+// }
 
 let autoData = new AutoData();
 function loadAutoScreen(e) {
@@ -207,9 +216,10 @@ function loadFieldButtons() {
         self.draw();
     };
 
-    let matchNumberLbl = new CanvasBtn(preData.teamNum, mainCtx, new Point(CIRLCE_WIDTH+SIDE_WIDTH,0), SIDE_WIDTH, regBtnHeight);
+    let matchNumberLbl = new CanvasBtn(preData.teamNum+ ", "+ preData.matchNum, mainCtx, new Point(CIRLCE_WIDTH+SIDE_WIDTH,0), SIDE_WIDTH, regBtnHeight);
     // console.log(preData.matchNum)
     matchNumberLbl.backgroundColor = "lightgrey";
+
     matchNumberLbl.draw();
     // console.log(matchNumberLbl)
     let upBtnMinus  = new CanvasBtn("-", mainCtx,new Point(SIDE_WIDTH/2,regBtnHeight),SIDE_WIDTH/2, regBtnHeight);

@@ -7,13 +7,19 @@ function loadPostScreen(self) {
 }
 
 class PostData {
-    constructor(_rung="", _succ=false, _noShow=false, _ground=false, _term=false, _die=false, _driver=1, _damage=1, _defense=1, _comments="Comments") {
-        this.rung = _rung; // string
-        this.succ = _succ;
-        this.noShow = _noShow;
-        this.term = _term; // bool
+    // low, mid, high, trav, ground, term, die, foul, noShow
+    constructor(_low=0,_mid=0,_high=0,_trav=0,_ground=false,_term=false,_die=false,_foul=0,_show=true,_driver='1', _damage='1', _defense='1', _comments="") {
+        this.low = _low;
+        this.mid = _mid;
+        this.trav = _trav;
+        this.high = _high;
+
         this.ground = _ground;
-        this.die = _die; // bool
+        this.term = _term;
+        this.die = _die;
+        this.foul = _foul;
+        this.show = _show;
+
         this.driver = _driver; // int
         this.damage = _damage; // int
         this.defense = _defense; // int
@@ -44,8 +50,8 @@ class SliderDOM {
         // this.label.style.paddingTop = '1em';
         this.label.style.margin = '0em';
         this.label.innerText = this.text+": "+this.val;
-        if (this.text === "Shooting")
-            this.label.innerText = "Damage: "+this.val;
+        // if (this.text === "Shooting")
+        //     this.label.innerText = "Damage: "+this.val;
         this.label.style.fontSize = ".5em";
         
     
@@ -81,10 +87,11 @@ function createRightSliders() {
     rightSliderLabel.id = 'skillsLabel';
     skillDiv.appendChild(rightSliderLabel);
 
+    // console.log(postData.driver);
     let driverSlider = new SliderDOM("Driver", 1, 5, postData.driver);
     driverSlider.slider.oninput = driverInput;
-    let shootingSlider = new SliderDOM("Shooting", 1, 5, postData.damage);
-    shootingSlider.slider.oninput = shootingInput;
+    let damageSlider = new SliderDOM("Damage", 1, 5, postData.damage);
+    damageSlider.slider.oninput = damageInput;
     let defenseSlider = new SliderDOM("Defense", 1, 5, postData.defense);
     defenseSlider.slider.oninput = defenseInput;
 
@@ -114,24 +121,32 @@ function unLoadPostScreen(self) {
     // this.shooter = _shooter; // int
     // this.defense = _defense; // int
     // let rung = postElements[0].getSelectedLabel();
-    let rung = [];
-    for (let i = 0; i < 4; i++) {
-        rung.push(postElements[i].select);
-    }
-    // let tipped = postElements[2].selected;
-    // let gotUp = postElements[3].selected;
-    let noShow = postElements[4].selected;
-    let ground = postElements[5].selected;
-    let term = postElements[6].selected;
-    let die = postElements[7].selected;
-    
+    // let noShow = postElements[4].selected;
+    // let ground = postElements[5].selected;
+    // let term = postElements[6].selected;
+    // let die = postElements[7].selected;
+
+    let low = postElements[0].state;
+    let mid = postElements[1].state;
+    let high = postElements[2].state;
+    let trav = postElements[3].state;
+    let ground = postElements[4].selected;
+    let term = postElements[5].selected;
+    let die = postElements[6].selected;
+    let foul = postElements[7].state;
+    let noShow = postElements[8].selected;
+    // console.log(low)    
     let driver = document.getElementById('DriverSlider').value;
-    let damage = document.getElementById('ShootingSlider').value;
+    // console.log(document.getElementById('DriverSlider'));
+    let damage = document.getElementById('DamageSlider').value;
+    console.log(damage)
     let defense = document.getElementById('DefenseSlider').value;
 
     let comments = document.getElementById('commentsText').value;
 
-    postData = new PostData(rung, noShow, ground, term, die, driver, damage, defense, comments);
+    postData = new PostData(low, mid, high, trav, 
+                            ground, term, die, foul, noShow,
+                            driver, damage, defense, comments);
     document.getElementById("skillDiv").remove();
     self.text = "END";
 }
@@ -142,9 +157,9 @@ function driverInput(e) {
     lb.innerText = "Driver: " + sld.value;
 }
 
-function shootingInput(e) {
-    let lb = document.getElementById('ShootingLabel');
-    let sld = document.getElementById('ShootingSlider');
+function damageInput(e) {
+    let lb = document.getElementById('DamageLabel');
+    let sld = document.getElementById('DamageSlider');
     lb.innerText = "Damage: " + sld.value;
 }
 
@@ -240,11 +255,13 @@ function createPostButtons() {
         let rightHeight = FIELD_HEIGHT / 6;
         let yRight = (FIELD_HEIGHT / (6*10));
         
-        postCtx.fillStyle = "blue";
+        let intakeColor = "lightgrey";
+        let otherColor = "white";
+        postCtx.fillStyle = intakeColor;
         postCtx.fillRect(hangerWidth, 0, POST_WIDTH-hangerWidth, 2*rightHeight);
 
         let intakeLbl = new CanvasBtn("INTAKE", postCtx, new Point(hangerWidth, 0), POST_WIDTH-hangerWidth, rightHeight);
-        intakeLbl.backgroundColor = "blue";
+        intakeLbl.backgroundColor = intakeColor;
         intakeLbl.borderColor = "trans";
         intakeLbl.draw();
 
@@ -257,11 +274,11 @@ function createPostButtons() {
         termBtn.clicked = groundBtnClicked;
         termBtn.draw();
         
-        postCtx.fillStyle = "pink";
+        postCtx.fillStyle = otherColor;
         postCtx.fillRect(hangerWidth, rightHeight*2, POST_WIDTH-hangerWidth, rightHeight+3*yRight);
 
         let dieBtnLbl = new CanvasBtn("DIED?", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, rightHeight*2+yRight*2), tippedWidth, rightHeight)
-        dieBtnLbl.backgroundColor = "pink";
+        dieBtnLbl.backgroundColor = otherColor;
         dieBtnLbl.borderColor= "trans";
         dieBtnLbl.draw();
 
@@ -270,11 +287,11 @@ function createPostButtons() {
         dieBtn.clicked = dieBtnClicked;
         dieBtn.draw();
 
-        postCtx.fillStyle = "blue";
+        postCtx.fillStyle = otherColor;
         postCtx.fillRect(hangerWidth, rightHeight*2+rightHeight+3*yRight, POST_WIDTH-hangerWidth, rightHeight+2*yRight);
 
         let foulLbl = new CanvasBtn("FOUL?", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, rightHeight*3+yRight*4), tippedWidth, rightHeight)
-        foulLbl.backgroundColor = "blue";
+        foulLbl.backgroundColor = otherColor;
         foulLbl.borderColor= "trans";
         foulLbl.draw();
 
@@ -283,16 +300,18 @@ function createPostButtons() {
         foulBtn.clicked = foulBtnClicked;
         foulBtn.draw(); 
         
-        postCtx.fillStyle = "pink";
+        postCtx.fillStyle = otherColor;
         postCtx.fillRect(hangerWidth, rightHeight*2+rightHeight+3*yRight+rightHeight+2*yRight, POST_WIDTH-hangerWidth, 2*rightHeight);
 
         let noShowLbl = new CanvasBtn("SHOWED?", postCtx, new Point(POST_WIDTH*.625-tippedWidth/2, rightHeight*4+yRight*7), tippedWidth, rightHeight)
-        noShowLbl.backgroundColor = "pink";
+        noShowLbl.backgroundColor = otherColor;
+        noShowLbl.fontSize = 24;
         noShowLbl.borderColor= "trans";
         noShowLbl.draw();
 
-        let noShow = new CanvasBtn("NO", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, rightHeight*4+yRight*7), tippedWidth, rightHeight)
-        noShow.backgroundColor = "red";
+        let noShow = new CanvasBtn("YES", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, rightHeight*4+yRight*7), tippedWidth, rightHeight)
+        noShow.backgroundColor = "limegreen";
+        noShow.selected = true;
         noShow.clicked = noShowClicked;
         noShow.draw();// noShow.draw();
         // noShow.clicked = dieBtnClicked;
@@ -302,22 +321,28 @@ function createPostButtons() {
         
 
         if (postElements.length != 0) {
-            // if (postElements[3].selected)
-            //     gotUpBtn.clicked(gotUpBtn);
-            // if (postElements[2].selected) {
-            //     tippedBtn.clicked(tippedBtn);
-            //     gotUpBtn.draw();
-            // }
+            lowBtn.state = postElements[0].state-1;
+            lowBtn.clicked(lowBtn);
+            
+            midBtn.state = postElements[1].state-1;
+            midBtn.clicked(midBtn);
+            
+            highBtn.state = postElements[2].state-1;
+            highBtn.clicked(highBtn);
+            
+            travBtn.state = postElements[3].state-1;
+            travBtn.clicked(travBtn);
+            
             if (postElements[4].selected)
-                noShow.clicked(noShow);
-            if (postElements[5].selected)
                 groundBtn.clicked(groundBtn);
-            if (postElements[6].selected)
+            if (postElements[5].selected)
                 termBtn.clicked(termBtn);
-            if (postElements[7].selected)
+            if (postElements[6].selected)
                 dieBtn.clicked(dieBtn);
-            if (postElements[8].selected)
-                dieBtn.clicked(dieBtn);
+            if (!postElements[8].selected)
+                noShow.clicked(noShow);
+            foulBtn.state = postElements[7].state-1;
+            foulBtn.clicked(foulBtn);
         }
 
         postElements = [];
@@ -326,7 +351,6 @@ function createPostButtons() {
         postElements.push(midBtn);
         postElements.push(highBtn);
         postElements.push(travBtn);
-        postElements.push(noShow);
         // postElements.push(tippedBtn);
         // postElements.push(gotUpBtn);
 
@@ -334,6 +358,7 @@ function createPostButtons() {
         postElements.push(termBtn);
         postElements.push(dieBtn);
         postElements.push(foulBtn);
+        postElements.push(noShow);
 
 
         
@@ -356,6 +381,7 @@ function dieBtnClicked(self) {
         self.backgroundColor = 'limegreen';
     }
     self.selected = !self.selected;
+    console.log(self.selected);
     self.draw();
 }
 
@@ -373,13 +399,21 @@ function noShowClicked(self) {
 
 function foulBtnClicked(self) {
     self.state++;
-    if (self.state == 3)
+    if (self.state == 5)
         self.state = 0;
     
     if (this.state == 0){
         self.backgroundColor = 'grey';
         self.text = "NO";
     }else if (this.state == 1) {
+        self.backgroundColor = "orange";
+        self.text = "FOUL";
+    }
+    else if(self.state == 2) {
+        self.backgroundColor = "orange";
+        self.text = "TECH"
+    }
+    else if (this.state == 3) {
         self.backgroundColor = "yellow";
         self.text = "YLW";
     }
@@ -424,9 +458,9 @@ function v(self) {
     if (this.state == 0)
         self.backgroundColor = 'grey';
     else if (this.state == 1)
-        self.backgroundColor = "red";
-    else
         self.backgroundColor = "limegreen";
+    else
+        self.backgroundColor = "red";
     
     self.draw();
 }

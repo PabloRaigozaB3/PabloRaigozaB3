@@ -218,9 +218,9 @@ class RadioBtn {
 
     select(i) {
         if (i != -1) {
-            this.btns[i].clicked();
+            this.btns[i].clicked(this.btns[i]);
             if (this.selectedIndex != -1) {
-                this.btns[this.selectedIndex].clickedOut();
+                this.btns[this.selectedIndex].clickedOut(this.btns[this.selectedIndex]);
                 this.btns[this.selectedIndex].backgroundColor = this.backgroundColor;
                 this.btns[this.selectedIndex].draw();
             }

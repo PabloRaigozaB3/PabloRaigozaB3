@@ -116,6 +116,7 @@ function createPreButtons() {
         finalBtn.draw();
 
         let roundBtns = new RadioBtn();
+        roundBtns.selectColor = "limegreen";
         roundBtns.btns.push(qualBtn);
         roundBtns.btns.push(eigthBtn);
         roundBtns.btns.push(fourthBtn);
@@ -128,10 +129,14 @@ function createPreButtons() {
         let botBtnHeight = preCanv.height/4;
 
         let botBtns = new RadioBtn();
+        botBtns.selectColor = "limegreen";
+
         for (let i = 0; i < 3; i++) {
             let redBtn = new CanvasBtn("Red "+(i+1), preCtx, new Point(preCanv.width/2+horiSpace, i*(botBtnHeight+vertSpace) + vertSpace), botBtnWidth, botBtnHeight);
+            // redBtn.backgroundColor = "pink";
             redBtn.draw();
             let blueBtn = new CanvasBtn("Blue "+(i+1), preCtx, new Point(preCanv.width/2+2*horiSpace+botBtnWidth, i*(botBtnHeight+vertSpace) + vertSpace), botBtnWidth, botBtnHeight);
+            // blueBtn.backgroundColor = "lightblue";
             blueBtn.draw();
             
             botBtns.btns.push(redBtn);

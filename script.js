@@ -16,22 +16,22 @@ function createBottomBtns() {
     bottomCanv.width = BOTTOM_WIDTH;
     bottomCanv.height = BOTTOM_HEIGHT;
 
-    let preBtn = new CanvasBtn("PRE", bottomCtx, new Point(0,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
+    let preBtn = new CanvasBtn("PRE", bottomCtx, new Point(0,0), FIELD_WIDTH/4, BOTTOM_HEIGHT);
     preBtn.clicked = loadPreScreen;
     preBtn.clickedOut = savePreScreen;
     preBtn.draw();
 
-    let autoBtn = new CanvasBtn("AUTO", bottomCtx, new Point(FIELD_WIDTH/3,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
+    let autoBtn = new CanvasBtn("AUTO", bottomCtx, new Point(FIELD_WIDTH/4,0), FIELD_WIDTH/4, BOTTOM_HEIGHT);
     autoBtn.clicked = loadAutoScreen;
     autoBtn.clickedOut = saveAutoScreen;
     autoBtn.draw();
 
-    let liveBtn = new CanvasBtn("TELE-OP", bottomCtx, new Point(2*FIELD_WIDTH/3,0), FIELD_WIDTH/3, BOTTOM_HEIGHT);
+    let liveBtn = new CanvasBtn("TELE-OP", bottomCtx, new Point(2*FIELD_WIDTH/4,0), FIELD_WIDTH/4, BOTTOM_HEIGHT);
     liveBtn.clicked = loadLiveScreen;
     liveBtn.clickedOut = saveLiveScreen;
     liveBtn.draw();
 
-    let postBtn = new CanvasBtn("END", bottomCtx, new Point(FIELD_WIDTH, 0), RIGHT_WIDTH, BOTTOM_HEIGHT);
+    let postBtn = new CanvasBtn("END", bottomCtx, new Point(3*FIELD_WIDTH/4, 0), FIELD_WIDTH/4, BOTTOM_HEIGHT);
     postBtn.clicked = loadPostScreen;
     postBtn.clickedOut = unLoadPostScreen;
     postBtn.draw();
@@ -39,6 +39,7 @@ function createBottomBtns() {
 
 
     let bottomBtns = new RadioBtn();
+    bottomBtns.selectColor = "limegreen";
     bottomBtns.btns.push (preBtn);
     bottomBtns.btns.push (autoBtn);
     bottomBtns.btns.push (liveBtn);
@@ -57,6 +58,8 @@ function bottomCanvClicked(e) {
     if (postBtn.selected &&postBtn.isInside(point)) {
         // side of QR code is the length of smallest side (width or height)
         // generate in middle of screen
+        bottomElements[0].select(1);
+        bottomElements[0].select(3);
         let side = window.innerHeight;
         if (window.innerHeight > window.innerWidth) {
             side = window.innerWidth;
@@ -84,11 +87,14 @@ function bottomCanvClicked(e) {
 
         // let autoShort = autoData.export();
         // let liveShort = liveData.export();
+
         let data = {
             preData,
             autoData,
             liveData,
-            postData
+            postData,
+            FIELD_WIDTH,
+            FIELD_HEIGHT
         };
 
         let qr = new QRCode(theQRDiv);

@@ -5,8 +5,8 @@ const MISS_SHOT = 3000;
 const MADE_SHOT = 3001;
 // const BLOCK_SHOT = 3002;
 
-let FIELD_WIDTH = window.innerWidth*.85
-let FIELD_HEIGHT = FIELD_WIDTH/2;
+let FIELD_WIDTH = window.innerWidth;
+let FIELD_HEIGHT = window.innerHeight*.85;
 
 let POST_WIDTH = window.innerWidth*2/3;
 let POST_HEIGHT = FIELD_HEIGHT;
