@@ -139,7 +139,7 @@ function unLoadPostScreen(self) {
     let driver = document.getElementById('DriverSlider').value;
     // console.log(document.getElementById('DriverSlider'));
     let damage = document.getElementById('DamageSlider').value;
-    console.log(damage)
+    // console.log(damage)
     let defense = document.getElementById('DefenseSlider').value;
 
     let comments = document.getElementById('commentsText').value;
@@ -296,7 +296,7 @@ function createPostButtons() {
         foulLbl.draw();
 
         let foulBtn = new CanvasBtn("NO", postCtx, new Point(POST_WIDTH*.875-tippedWidth/2, rightHeight*3+yRight*4), tippedWidth, rightHeight)
-        foulBtn.backgroundColor = "grey";
+        foulBtn.backgroundColor = "limegreen";
         foulBtn.clicked = foulBtnClicked;
         foulBtn.draw(); 
         
@@ -403,7 +403,7 @@ function foulBtnClicked(self) {
         self.state = 0;
     
     if (this.state == 0){
-        self.backgroundColor = 'grey';
+        self.backgroundColor = 'limegreen';
         self.text = "NO";
     }else if (this.state == 1) {
         self.backgroundColor = "orange";

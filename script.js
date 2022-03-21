@@ -88,17 +88,18 @@ function bottomCanvClicked(e) {
         // let autoShort = autoData.export();
         // let liveShort = liveData.export();
 
+        let version = 1;
         let data = {
+            version,
             preData,
             autoData,
-            liveData,
-            postData,
-            FIELD_WIDTH,
-            FIELD_HEIGHT
+            liveData
         };
 
-        let qr = new QRCode(theQRDiv);
-        qr.makeCode(JSON.stringify(data));
+        
+
+        let qr1 = new QRCode(theQRDiv);
+        qr1.makeCode(JSON.stringify(data));
         console.log(JSON.stringify(data));
         console.log(JSON.stringify(data).length);
         theQRDiv.style.position = "absolute";
@@ -116,8 +117,40 @@ function bottomCanvClicked(e) {
     e.preventDefault();
 }
 
+let qrClicked = false;
+
 function qrDivClick(e) {
-    document.getElementById('qrDiv').remove();
+    if (!qrClicked) {
+        let version = 2;
+        let data1 = {
+            version,
+            postData,
+            FIELD_WIDTH,
+            FIELD_HEIGHT
+        }
+
+        let qrDiv = document.getElementById('qrDiv');
+        qrDiv.style.backgroundColor = "lightgrey";
+
+        document.getElementById('theQRDiv').remove();
+        let theQRDiv = document.createElement('div');
+        theQRDiv.id = 'theQRDiv';
+        qrDiv.appendChild(theQRDiv);
+        document.body.appendChild(qrDiv);
+        
+        let qr1 = new QRCode(theQRDiv);
+        qr1.makeCode(JSON.stringify(data1));
+        theQRDiv.style.position = "absolute";
+        console.log(JSON.stringify(data1));
+        console.log(JSON.stringify(data1).length);
+
+        let theSide = theQRDiv.offsetWidth;
+        theQRDiv.style.left  = (window.innerWidth-theSide)/2+"px";
+        theQRDiv.style.top = (window.innerHeight-theSide)/2+"px";
+    } else {
+        document.getElementById('qrDiv').remove();
+    }
+    qrClicked = !qrClicked;
 }
 
 loadBottomCanv();

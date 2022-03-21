@@ -172,14 +172,14 @@ function loadFieldCenter() {
     mainCtx.fillStyle = "pink";
     mainCtx.fill();
     
-    for (let i = 0; i < 6; i++) {
-        if (i < 3) {mainCtx.fillStyle = "blue";}
+    for (let i = 0; i < 4; i++) {
+        if (i < 2) {mainCtx.fillStyle = "blue";}
         else {mainCtx.fillStyle = "red";}
 
         drawWedge(new Point(width/2, height/2),
-        radius,
-        65+i*(60),
-        125+i*60, mainCtx);
+        height/3,
+        65+i*(90),
+        155+i*90, mainCtx);
         mainCtx.strokeStyle = mainCtx.fillStyle;
         mainCtx.lineWidth = 3;
         mainCtx.stroke();
@@ -396,14 +396,14 @@ function mainCanvasClick(e) {
         mainCtx.fillStyle = "pink";
         mainCtx.fill();
         
-        for (let i = 0; i < 6; i++) {
-            if (i < 3) {mainCtx.fillStyle = "blue";}
+        for (let i = 0; i < 4; i++) {
+            if (i < 2) {mainCtx.fillStyle = "blue";}
             else {mainCtx.fillStyle = "red";}
 
             drawWedge(new Point(width/2, height/2),
             radius,
-            65+i*(60),
-            125+i*60, mainCtx);
+            65+i*(90),
+            155+i*90, mainCtx);
             mainCtx.strokeStyle = mainCtx.fillStyle;
             mainCtx.lineWidth = 3;
             mainCtx.stroke();
