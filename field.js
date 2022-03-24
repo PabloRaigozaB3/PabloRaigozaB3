@@ -16,24 +16,24 @@ function drawField(width, height, ctx, point = new Point(0,0)) {
 
     let terminalWidth = getTerminalWidth(width);
     let terminalHeight = getTerminalHeight(height);
-    ctx.fillStyle = 'blue';
+    ctx.fillStyle = 'red';
     ctx.fillRect(point.x,point.y,hangarWidth,hangarHeight);
 
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = 'blue';
     ctx.fillRect(point.x+width-hangarWidth,point.y+height-hangarHeight,hangarWidth,hangarHeight);
 
-    ctx.fillStyle = 'blue';
+    ctx.fillStyle = 'red';
     drawTriangle(new Point(point.x,point.y+height-terminalHeight),
              new Point(point.x, point.y+height),
              new Point(point.x+terminalWidth, point.y+height), ctx);
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = 'blue';
     drawTriangle(new Point(point.x+width-terminalWidth,point.y),
              new Point(width+point.x, point.y),
              new Point(width+point.x, point.y+terminalHeight), ctx);
 
     for (let i = 0; i < 4; i++) {
-        if (i < 2) {ctx.fillStyle = "blue";}
-        else {ctx.fillStyle = "red";}
+        if (i < 2) {ctx.fillStyle = "red";}
+        else {ctx.fillStyle = "blue";}
 
         drawWedge(new Point(point.x+width/2, point.y+height/2),
         height/3,
