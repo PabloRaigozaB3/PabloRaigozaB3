@@ -129,20 +129,6 @@ function loadFieldCenter() {
     populateBallPos(width, height, radius, ballRadius);
     
     mainCtx.fillStyle = "red";
-    drawCircle(new Point(xBallPos[0], yBallPos[0]), ballRadius, mainCtx);
-    mainCtx.fill();
-    drawCircle(new Point(xBallPos[1], yBallPos[1]), ballRadius, mainCtx);
-    mainCtx.fill();
-    drawCircle(new Point(xBallPos[3], yBallPos[3]), ballRadius, mainCtx);
-    mainCtx.fill();
-    drawCircle(new Point(xBallPos[5], yBallPos[5]), ballRadius, mainCtx);
-    mainCtx.fill();
-    drawCircle(new Point(xBallPos[8], yBallPos[8]), ballRadius, mainCtx);
-    mainCtx.fill();
-    drawCircle(new Point(xBallPos[10], yBallPos[10]), ballRadius, mainCtx);
-    mainCtx.fill();
-
-    mainCtx.fillStyle = "blue";
     drawCircle(new Point(xBallPos[2], yBallPos[2]), ballRadius, mainCtx);
     mainCtx.fill();
     drawCircle(new Point(xBallPos[4], yBallPos[4]), ballRadius, mainCtx);
@@ -156,25 +142,39 @@ function loadFieldCenter() {
     drawCircle(new Point(xBallPos[11], yBallPos[11]), ballRadius, mainCtx);
     mainCtx.fill();
 
+    mainCtx.fillStyle = "blue";
+    drawCircle(new Point(xBallPos[0], yBallPos[0]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[1], yBallPos[1]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[3], yBallPos[3]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[5], yBallPos[5]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[8], yBallPos[8]), ballRadius, mainCtx);
+    mainCtx.fill();
+    drawCircle(new Point(xBallPos[10], yBallPos[10]), ballRadius, mainCtx);
+    mainCtx.fill();
+
     
     drawWedge(new Point(width/2, height/2),
     radius,
     65,
     245,
     mainCtx);
-    mainCtx.fillStyle = "lightblue";
+    mainCtx.fillStyle = "pink";
     mainCtx.fill();
     drawWedge(new Point(width/2, height/2),
     radius,
     245,
     425,
     mainCtx);
-    mainCtx.fillStyle = "pink";
+    mainCtx.fillStyle = "lightblue";
     mainCtx.fill();
     
     for (let i = 0; i < 4; i++) {
-        if (i < 2) {mainCtx.fillStyle = "blue";}
-        else {mainCtx.fillStyle = "red";}
+        if (i < 2) {mainCtx.fillStyle = "red";}
+        else {mainCtx.fillStyle = "blue";}
 
         drawWedge(new Point(width/2, height/2),
         height/3,
@@ -386,19 +386,19 @@ function mainCanvasClick(e) {
         65,
         245,
         mainCtx);
-        mainCtx.fillStyle = "lightblue";
+        mainCtx.fillStyle = "pink";
         mainCtx.fill();
         drawWedge(new Point(width/2, height/2),
         radius,
         245,
         425,
         mainCtx);
-        mainCtx.fillStyle = "pink";
+        mainCtx.fillStyle = "lightblue";
         mainCtx.fill();
         
         for (let i = 0; i < 4; i++) {
-            if (i < 2) {mainCtx.fillStyle = "blue";}
-            else {mainCtx.fillStyle = "red";}
+            if (i < 2) {mainCtx.fillStyle = "red";}
+            else {mainCtx.fillStyle = "blue";}
 
             drawWedge(new Point(width/2, height/2),
             radius,
@@ -407,6 +407,12 @@ function mainCanvasClick(e) {
             mainCtx.strokeStyle = mainCtx.fillStyle;
             mainCtx.lineWidth = 3;
             mainCtx.stroke();
+
+            // if (mainCtx.fillStyle === "red")
+            //     mainCtx.fillStyle = "pink";
+            // else
+            //     mainCtx.fillStyle = "lightblue"
+            // mainCtx.fill();
         }
         mainCtx.fillStyle = "green";
         drawCircle(point, BALL_RADIUS/2, mainCtx);
@@ -417,7 +423,7 @@ function mainCanvasClick(e) {
 }
 
 function isBallRed(ball) {
-    return(ball == 0 || ball==1 || ball==3 || ball==5 || ball==8 || ball==10);
+    return(ball == 2 || ball==4 || ball==6 || ball==7 || ball==9 || ball==11);
 }
 
 function dist(p1, p2) {
