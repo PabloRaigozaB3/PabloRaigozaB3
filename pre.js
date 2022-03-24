@@ -73,7 +73,7 @@ function loadPreScreen(e) {
     let preCtx = preCanv.getContext('2d');
 
     preCanv.width = window.innerWidth;
-    preCanv.height = window.innerHeight - preDiv.clientHeight - BOTTOM_HEIGHT;
+    preCanv.height = window.innerHeight - preDiv.clientHeight - (window.innerHeight-FIELD_HEIGHT);
     preCanv.style = "position:absolute; left: 0px; top:"+preDiv.clientHeight+"px";
     preCtx.fillStyle = 'white';
     preCtx.fillRect(0,0,preCanv.width, preCanv.height);
@@ -82,6 +82,8 @@ function loadPreScreen(e) {
     preCanv.addEventListener('click', preCanvClick);
     document.body.appendChild(preCanv);
     createPreButtons();
+    // console.log("do i get called")
+    // console.log(FIELD_HEIGHT);
 }
 
 function savePreScreen(e) {
@@ -149,6 +151,10 @@ function createPreButtons() {
         resetBtn.clicked = resestBtnClicked;
         resetBtn.draw();
 
+        let clearBtn = new CanvasBtn("X", preCtx, new Point(0, resetBtnWidth*1.2), resetBtnWidth, resetBtnWidth);
+        clearBtn.clicked = clearBtnClicked;
+        clearBtn.draw();
+
         if (preElements.length != 0) {
             roundBtns.select(preElements[0].selectedIndex);
             botBtns.select(preElements[1].selectedIndex);
@@ -163,6 +169,7 @@ function createPreButtons() {
         preElements.push(roundBtns);
         preElements.push(botBtns);
         preElements.push(resetBtn);
+        preElements.push(clearBtn);
     // } else {
     //     for (let i = 0; i < preElements.length; i++) {
     //         preElements[i].setCtx(preCtx);
@@ -173,6 +180,22 @@ function createPreButtons() {
 
 function resestBtnClicked(self) {
     repopulateConts();
+    loadBottomCanv();
+}
+
+function clearBtnClicked(self) {
+    mainElements = [];
+    autoElements = [];
+    bottomElements = [];
+    preElements = [];
+    postElements = [];
+    liveElements = [];
+    preData = new PreData();
+    liveData = new LiveData();
+    autoData = new AutoData();
+    postData = new PostData();
+
+    // repopulateConts();
     loadBottomCanv();
 }
 

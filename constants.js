@@ -36,7 +36,7 @@ const MADE_TRANS_B = 0;
 
 function repopulateConts() {
     FIELD_WIDTH = window.innerWidth;
-    FIELD_HEIGHT = FIELD_WIDTH/2;
+    FIELD_HEIGHT = window.innerHeight*.85;
 
     POST_WIDTH = window.innerWidth*2/3;
     POST_HEIGHT = FIELD_HEIGHT;
