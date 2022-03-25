@@ -204,7 +204,7 @@ function loadFieldButtons() {
     taxiBtnLbl.draw();
     taxiBtn.backgroundColor="red";taxiBtn.draw();
     taxiBtn.clicked = function(self) {
-        autoData.didTaxi = !autoData.didTaxi;
+        // autoData.didTaxi = !autoData.didTaxi;
         if (self.selected) {
             self.backgroundColor = 'red';
             self.text = "NO"
@@ -213,6 +213,7 @@ function loadFieldButtons() {
             self.text = "YES";
         }
         self.selected = !self.selected;
+        // autoData.didTaxi = self.selected;
         self.draw();
     };
 
@@ -340,7 +341,8 @@ function loadFieldButtons() {
 }
 
 function saveAutoScreen() {
-
+    // console.log(autoData.didTaxi);
+    autoData.didTaxi = autoElements[0].selected;
 }
 
 function mainCanvasClick(e) {

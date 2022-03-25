@@ -41,8 +41,11 @@ class LiveData {
 let liveData = new LiveData();
 
 function loadLiveScreen() {
+    let autoBefore = autoData.didTaxi;
     loadAutoScreen();
     saveAutoScreen();
+    autoData.didTaxi = autoBefore;
+    // bottomElements[1].select(1);
 
     clearAllCanvas();
     loadFieldLive();
