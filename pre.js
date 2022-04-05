@@ -39,6 +39,13 @@ class PreData {
 }
 let preData = new PreData();
 
+function createOption(title, someInput) {
+    let some = document.createElement('option');
+    some.id = title;
+    some.innerText = title;
+    someInput.appendChild(some);
+}
+
 function loadPreScreen(e) {
     clearAllCanvas();
     let preDiv = document.createElement('div');
@@ -50,20 +57,87 @@ function loadPreScreen(e) {
     let scouterInput = new TextInput("ScouterInitials", FIELD_HEIGHT*.06);
     scouterInput.div.style = divStyle;
     
-    let teamInput = new TextInput("Team#",FIELD_HEIGHT*.06);
-    teamInput.div.style = divStyle;
-    teamInput.input.style.width = "3em";
+    // let teamInput = new TextInput("Team#",FIELD_HEIGHT*.06);
+    // teamInput.div.style = divStyle;
+    // let dropDown = document.createElement('select');
+    // teamInput.input = dropDown;
+    // teamInput.input.style.width = "3em";
+
+    teamDiv = document.createElement('div');
+    teamLabel = document.createElement('p');
+    teamInput = document.createElement('select');
+
+    teamLabel.innerText = "Team";
+    teamLabel.id = "Team" + "Label";
+    teamLabel.style = "font-size: "+ FIELD_HEIGHT*.06+"px;";
+
+    teamInput.value = 0;
+    teamInput.id = "Team" + "Input";
+    teamInput.style.fontSize =  FIELD_HEIGHT*.06+"px";
+    teamInput.style.width = "2em";
+    teamInput.style.margin = "1em";
+
+    teamDiv.id = "Team" + "Div";
+    teamDiv.style = "font-size: "+ FIELD_HEIGHT*.03+"px;";
+    teamDiv.appendChild(teamLabel);
+    teamDiv.appendChild(teamInput);
+
+    
+    createOption("359", teamInput);
+    createOption("846", teamInput);
+    createOption("1332", teamInput);
+    createOption("1622", teamInput);
+    createOption("1828", teamInput);
+    createOption("2122", teamInput);
+    createOption("2486", teamInput);
+    createOption("2594", teamInput);
+    createOption("2972", teamInput);
+    createOption("3006", teamInput);
+    createOption("3166", teamInput);
+    createOption("3225", teamInput);
+    createOption("3243", teamInput);
+    createOption("3245", teamInput);
+    createOption("3288", teamInput);
+    createOption("3374", teamInput);
+    createOption("3405", teamInput);
+    createOption("3648", teamInput);
+    createOption("4388", teamInput);
+    createOption("4499", teamInput);
+    createOption("4585", teamInput);
+    createOption("4598", teamInput);
+    createOption("4643", teamInput);
+    createOption("4944", teamInput);
+    createOption("5071", teamInput);
+    createOption("5468", teamInput);
+    createOption("5871", teamInput);
+    createOption("5933", teamInput);
+    createOption("6411", teamInput);
+    createOption("6479", teamInput);
+    createOption("6844", teamInput);
+    createOption("7243", teamInput);
+    createOption("7436", teamInput);
+    createOption("7634", teamInput);
+    createOption("7645", teamInput);
+    createOption("7895", teamInput);
+    createOption("7905", teamInput);
+    createOption("7906", teamInput);
+    createOption("8174", teamInput);
+    createOption("8546", teamInput);
+    createOption("8885", teamInput);
+
+    teamDiv.style = divStyle;
+    teamInput.style.width = "3em";
 
     let matchInput = new TextInput("Match#",FIELD_HEIGHT*.06);
     matchInput.div.style = divStyle;
     matchInput.input.style.width = "3em";
  
     scouterInput.input.value = preData.scoutInit;
-    teamInput.input.value = preData.teamNum;
+    teamInput.value = preData.teamNum;
     matchInput.input.value = preData.matchNum;
 
     preDiv.appendChild(scouterInput.div);
-    preDiv.appendChild(teamInput.div);
+    preDiv.appendChild(teamDiv);
     preDiv.appendChild(matchInput.div);
 
     preDiv.style = "display:flex; width:"+window.innerWidth+"px; height: 5em; flex-direction:row; align-items:center; justify-content:center;";
@@ -88,7 +162,11 @@ function loadPreScreen(e) {
 
 function savePreScreen(e) {
     let scoutInit = document.getElementById('ScouterInitialsInput').value;
-    let teamNum = document.getElementById('Team#Input').value;
+    // let teamNum = document.getElementById('Team#Input').value;
+
+    let mylist = document.getElementById("TeamInput");  
+    let teamNum = mylist.options[mylist.selectedIndex].text;  
+
     let matchNum = document.getElementById('Match#Input').value;
     let roundType = preElements[0].getSelected().text;
     let botType = preElements[1].getSelected().text;
