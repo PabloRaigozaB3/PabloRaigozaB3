@@ -63,21 +63,21 @@ function loadPreScreen(e) {
     // teamInput.input = dropDown;
     // teamInput.input.style.width = "3em";
 
-    teamDiv = document.createElement('div');
-    teamLabel = document.createElement('p');
-    teamInput = document.createElement('select');
+    let teamDiv = document.createElement('div');
+    let teamLabel = document.createElement('p');
+    let teamInput = document.createElement('select');
 
     teamLabel.innerText = "Team";
-    teamLabel.id = "Team" + "Label";
+    teamLabel.id = "Team#" + "Label";
     teamLabel.style = "font-size: "+ FIELD_HEIGHT*.06+"px;";
 
     teamInput.value = 0;
-    teamInput.id = "Team" + "Input";
+    teamInput.id = "Team#" + "Input";
     teamInput.style.fontSize =  FIELD_HEIGHT*.06+"px";
     teamInput.style.width = "2em";
     teamInput.style.margin = "1em";
 
-    teamDiv.id = "Team" + "Div";
+    teamDiv.id = "Team#" + "Div";
     teamDiv.style = "font-size: "+ FIELD_HEIGHT*.03+"px;";
     teamDiv.appendChild(teamLabel);
     teamDiv.appendChild(teamInput);
@@ -164,8 +164,13 @@ function savePreScreen(e) {
     let scoutInit = document.getElementById('ScouterInitialsInput').value;
     // let teamNum = document.getElementById('Team#Input').value;
 
-    let mylist = document.getElementById("TeamInput");  
-    let teamNum = mylist.options[mylist.selectedIndex].text;  
+    let mylist = document.getElementById("Team#Input");
+    // console.log(mylist.selectedIndex)
+    let teamNum;
+    if (mylist.selectedIndex == -1)
+        teamNum = "";
+    else
+        teamNum = mylist.options[mylist.selectedIndex].text;
 
     let matchNum = document.getElementById('Match#Input').value;
     let roundType = preElements[0].getSelected().text;
